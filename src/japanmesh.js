@@ -3,12 +3,14 @@ const LEVEL1_CODES = require('./constants/level1_codes')
 
 function isValidCode(code) {
   // 桁数チェック
-  if (code.length !== MESH.LEVEL1.DIGIT &&
-      code.length !== MESH.LEVEL2.DIGIT &&
-      code.length !== MESH.LEVEL3.DIGIT &&
-      code.length !== MESH.LEVEL4.DIGIT &&
-      code.length !== MESH.LEVEL5.DIGIT &&
-      code.length !== MESH.LEVEL6.DIGIT) {
+  if (
+    code.length !== MESH.LEVEL1.DIGIT &&
+    code.length !== MESH.LEVEL2.DIGIT &&
+    code.length !== MESH.LEVEL3.DIGIT &&
+    code.length !== MESH.LEVEL4.DIGIT &&
+    code.length !== MESH.LEVEL5.DIGIT &&
+    code.length !== MESH.LEVEL6.DIGIT
+  ) {
     return false
   }
 
@@ -20,11 +22,13 @@ function isValidCode(code) {
         return true
       }
     } else if (level === 2) {
-      if (Number(c.slice(-2)) > MESH.LEVEL2.DIVISION.X * MESH.LEVEL2.DIVISION.Y) {
+      const DIVISION_NUM = MESH.LEVEL2.DIVISION.X * MESH.LEVEL2.DIVISION.Y
+      if (Number(c.slice(-2)) > DIVISION_NUM) {
         return true
       }
     } else if (level === 3) {
-      if (Number(c.slice(-2)) > MESH.LEVEL3.DIVISION.X * MESH.LEVEL3.DIVISION.Y) {
+      const DIVISION_NUM = MESH.LEVEL3.DIVISION.X * MESH.LEVEL3.DIVISION.Y
+      if (Number(c.slice(-2)) > DIVISION_NUM) {
         return true
       }
     } else if (level === 4 || level === 5 || level === 6) {
@@ -101,28 +105,28 @@ function getCodeByLevel(code, level) {
 
 function toCode(lat, lng, level) {
   // （１）緯度よりｐ，ｑ，ｒ，ｓ，ｔを算出
-  const p = Math.floor(lat * 60 / 40)
-  const a = lat * 60 % 40
+  const p = Math.floor((lat * 60) / 40)
+  const a = (lat * 60) % 40
   const q = Math.floor(a / 5)
   const b = a % 5
-  const r = Math.floor(b * 60 / 30)
-  const c = b * 60 % 30
+  const r = Math.floor((b * 60) / 30)
+  const c = (b * 60) % 30
   const s = Math.floor(c / 15)
   const d = c % 15
   const t = Math.floor(d / 7.5)
   // （２）経度よりｕ，ｖ，ｗ，ｘ，ｙを算出
   const u = Math.floor(lng - 100)
   const f = lng - 100 - u
-  const v = Math.floor(f * 60 / 7.5)
-  const g = f * 60 % 7.5
-  const w = Math.floor(g * 60 / 45)
-  const h = g * 60 % 45
+  const v = Math.floor((f * 60) / 7.5)
+  const g = (f * 60) % 7.5
+  const w = Math.floor((g * 60) / 45)
+  const h = (g * 60) % 45
   const x = Math.floor(h / 22.5)
   const i = h % 22.5
   const y = Math.floor(i / 11.25)
   // （３）ｓ，ｘよりｍを算出，ｔ，ｙよりｎを算出
-  const m = (s * 2) + (x + 1)
-  const n = (t * 2) + (y + 1)
+  const m = s * 2 + (x + 1)
+  const n = t * 2 + (y + 1)
   // （４）ｐ，ｑ，ｒ，ｕ，ｖ，ｗ，ｍ、ｎより地域メッシュ・コードを算出
   let code = `${p}${u}${q}${v}${r}${w}${m}${n}`
   if (level) {
@@ -133,7 +137,7 @@ function toCode(lat, lng, level) {
 
 function toGeoJSON(code, properties) {
   if (isValidCode(code) === false) {
-    throw(new Error(`'${code}' is invalid mesh code.`))
+    throw new Error(`'${code}' is invalid mesh code.`)
   }
   const lv1X = code.slice(2, 4)
   const lv1Y = code.slice(0, 2)
@@ -141,9 +145,13 @@ function toGeoJSON(code, properties) {
   let minX, maxX, minY, maxY
 
   if (code.length >= MESH.LEVEL1.DIGIT) {
-    minX = MESH.LEVEL1.SECTION.LNG.MIN + (lv1X - MESH.LEVEL1.SECTION.X.MIN) * MESH.LEVEL1.DISTANCE.LNG
+    minX =
+      MESH.LEVEL1.SECTION.LNG.MIN +
+      (lv1X - MESH.LEVEL1.SECTION.X.MIN) * MESH.LEVEL1.DISTANCE.LNG
     maxX = minX + MESH.LEVEL1.DISTANCE.LNG
-    minY = MESH.LEVEL1.SECTION.LAT.MIN + (lv1Y - MESH.LEVEL1.SECTION.Y.MIN) * MESH.LEVEL1.DISTANCE.LAT
+    minY =
+      MESH.LEVEL1.SECTION.LAT.MIN +
+      (lv1Y - MESH.LEVEL1.SECTION.Y.MIN) * MESH.LEVEL1.DISTANCE.LAT
     maxY = minY + MESH.LEVEL1.DISTANCE.LAT
   }
 
@@ -159,40 +167,40 @@ function toGeoJSON(code, properties) {
   if (code.length >= MESH.LEVEL3.DIGIT) {
     const lv3X = code.slice(7, 8)
     const lv3Y = code.slice(6, 7)
-    minX += lv3X * MESH.LEVEL3.DISTANCE.LNG;
-    maxX = minX + MESH.LEVEL3.DISTANCE.LNG;
-    minY += lv3Y * MESH.LEVEL3.DISTANCE.LAT;
-    maxY = minY + MESH.LEVEL3.DISTANCE.LAT;
+    minX += lv3X * MESH.LEVEL3.DISTANCE.LNG
+    maxX = minX + MESH.LEVEL3.DISTANCE.LNG
+    minY += lv3Y * MESH.LEVEL3.DISTANCE.LAT
+    maxY = minY + MESH.LEVEL3.DISTANCE.LAT
   }
 
   if (code.length >= MESH.LEVEL4.DIGIT) {
     const lv4Num = code.slice(8, 9)
-    const lv4X = (lv4Num === 1 || lv4Num === 3) ? 0 : 1
-    const lv4Y = (lv4Num === 1 || lv4Num === 2) ? 0 : 1
-    minX += lv4X * MESH.LEVEL4.DISTANCE.LNG;
-    maxX = minX + MESH.LEVEL4.DISTANCE.LNG;
-    minY += lv4Y * MESH.LEVEL4.DISTANCE.LAT;
-    maxY = minY + MESH.LEVEL4.DISTANCE.LAT;
+    const lv4X = lv4Num === 1 || lv4Num === 3 ? 0 : 1
+    const lv4Y = lv4Num === 1 || lv4Num === 2 ? 0 : 1
+    minX += lv4X * MESH.LEVEL4.DISTANCE.LNG
+    maxX = minX + MESH.LEVEL4.DISTANCE.LNG
+    minY += lv4Y * MESH.LEVEL4.DISTANCE.LAT
+    maxY = minY + MESH.LEVEL4.DISTANCE.LAT
   }
 
   if (code.length >= MESH.LEVEL5.DIGIT) {
     const lv5Num = code.slice(9, 10)
-    const lv5X = (lv5Num === 1 || lv5Num === 3) ? 0 : 1
-    const lv5Y = (lv5Num === 1 || lv5Num === 2) ? 0 : 1
-    minX += lv5X * MESH.LEVEL5.DISTANCE.LNG;
-    maxX = minX + MESH.LEVEL5.DISTANCE.LNG;
-    minY += lv5Y * MESH.LEVEL5.DISTANCE.LAT;
-    maxY = minY + MESH.LEVEL5.DISTANCE.LAT;
+    const lv5X = lv5Num === 1 || lv5Num === 3 ? 0 : 1
+    const lv5Y = lv5Num === 1 || lv5Num === 2 ? 0 : 1
+    minX += lv5X * MESH.LEVEL5.DISTANCE.LNG
+    maxX = minX + MESH.LEVEL5.DISTANCE.LNG
+    minY += lv5Y * MESH.LEVEL5.DISTANCE.LAT
+    maxY = minY + MESH.LEVEL5.DISTANCE.LAT
   }
 
   if (code.length >= MESH.LEVEL6.DIGIT) {
     const lv6Num = code.slice(10, 11)
-    const lv6X = (lv6Num === 1 || lv6Num === 3) ? 0 : 1
-    const lv6Y = (lv6Num === 1 || lv6Num === 2) ? 0 : 1
-    minX += lv6X * MESH.LEVEL6.DISTANCE.LNG;
-    maxX = minX + MESH.LEVEL6.DISTANCE.LNG;
-    minY += lv6Y * MESH.LEVEL6.DISTANCE.LAT;
-    maxY = minY + MESH.LEVEL6.DISTANCE.LAT;
+    const lv6X = lv6Num === 1 || lv6Num === 3 ? 0 : 1
+    const lv6Y = lv6Num === 1 || lv6Num === 2 ? 0 : 1
+    minX += lv6X * MESH.LEVEL6.DISTANCE.LNG
+    maxX = minX + MESH.LEVEL6.DISTANCE.LNG
+    minY += lv6Y * MESH.LEVEL6.DISTANCE.LAT
+    maxY = minY + MESH.LEVEL6.DISTANCE.LAT
   }
   return createGeoJSON(minX, maxX, minY, maxY, properties)
 }
@@ -219,7 +227,7 @@ function getCodes(code = null) {
     return LEVEL1_CODES
   }
   if (isValidCode(code) === false) {
-    throw(new Error(`'${code}' is invalid mesh code.`))
+    throw new Error(`'${code}' is invalid mesh code.`)
   }
   const codes = []
   const level = getLevelByCode(code)

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint --ext .js --ignore-path .gitignore ."
   },
   "repository": {
     "type": "git",
@@ -22,5 +22,21 @@
   "bugs": {
     "url": "https://github.com/qazsato/japanmesh/issues"
   },
-  "homepage": "https://github.com/qazsato/japanmesh#readme"
+  "homepage": "https://github.com/qazsato/japanmesh#readme",
+  "lint-staged": {
+    "*.js": "eslint"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "devDependencies": {
+    "eslint": "7.7.0",
+    "eslint-config-prettier": "6.11.0",
+    "eslint-plugin-prettier": "3.1.4",
+    "husky": "4.2.5",
+    "lint-staged": "10.2.13",
+    "prettier": "2.1.1"
+  }
 }
