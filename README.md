@@ -36,8 +36,8 @@ const japanmesh = require('japanmesh')
 指定した緯度経度(WGS84)から、地域メッシュコードを取得します。  
 
 ```javascript
-japanmesh.toCode(35.70078, 139.71475)
-=> '5339454711'
+japanmesh.toCode(35.70078, 139.71475, 3)
+=> '53394547'
 ```
 
 ### japanmesh.toGeoJSON(code[, properties])
@@ -45,22 +45,22 @@ japanmesh.toCode(35.70078, 139.71475)
 指定した地域メッシュコードから、ポリゴンデータ(GeoJSON)を取得します。  
 
 ```javascript
-japanmesh.toGeoJSON('5438')
+japanmesh.toGeoJSON('53394547')
 =>{
-    geometry: {
-      coordinates: [
+    "type": "Feature",
+    "properties": {},
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [
         [
-          [139, 36.666666666666664],
-          [138, 36.666666666666664],
-          [138, 36],
-          [139, 36],
-          [139, 36.666666666666664],
-        ],
-      ],
-      type: 'Polygon',
-    },
-    properties: {},
-    type: 'Feature',
+          [139.725, 35.70833333333333],
+          [139.7125, 35.70833333333333],
+          [139.7125, 35.699999999999996],
+          [139.725, 35.699999999999996],
+          [139.725, 35.70833333333333]
+        ]
+      ]
+    }
   }
 ```
 
