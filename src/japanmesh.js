@@ -66,7 +66,10 @@ function splitCodeByLevel(code) {
   return codes
 }
 
-function getLevel(code) {
+function getLevel(code = null) {
+  if (code === null) {
+    return null
+  }
   const digit = code.length
   switch (digit) {
     case MESH.LEVEL1.DIGIT:
@@ -177,8 +180,8 @@ function toGeoJSON(code, properties) {
 
   if (code.length >= MESH.LEVEL4.DIGIT) {
     const lv4Num = code.slice(8, 9)
-    const lv4X = lv4Num === 1 || lv4Num === 3 ? 0 : 1
-    const lv4Y = lv4Num === 1 || lv4Num === 2 ? 0 : 1
+    const lv4X = lv4Num === '1' || lv4Num === '3' ? 0 : 1
+    const lv4Y = lv4Num === '1' || lv4Num === '2' ? 0 : 1
     minX += lv4X * MESH.LEVEL4.DISTANCE.LNG
     maxX = minX + MESH.LEVEL4.DISTANCE.LNG
     minY += lv4Y * MESH.LEVEL4.DISTANCE.LAT
@@ -187,8 +190,8 @@ function toGeoJSON(code, properties) {
 
   if (code.length >= MESH.LEVEL5.DIGIT) {
     const lv5Num = code.slice(9, 10)
-    const lv5X = lv5Num === 1 || lv5Num === 3 ? 0 : 1
-    const lv5Y = lv5Num === 1 || lv5Num === 2 ? 0 : 1
+    const lv5X = lv5Num === '1' || lv5Num === '3' ? 0 : 1
+    const lv5Y = lv5Num === '1' || lv5Num === '2' ? 0 : 1
     minX += lv5X * MESH.LEVEL5.DISTANCE.LNG
     maxX = minX + MESH.LEVEL5.DISTANCE.LNG
     minY += lv5Y * MESH.LEVEL5.DISTANCE.LAT
@@ -197,8 +200,8 @@ function toGeoJSON(code, properties) {
 
   if (code.length >= MESH.LEVEL6.DIGIT) {
     const lv6Num = code.slice(10, 11)
-    const lv6X = lv6Num === 1 || lv6Num === 3 ? 0 : 1
-    const lv6Y = lv6Num === 1 || lv6Num === 2 ? 0 : 1
+    const lv6X = lv6Num === '1' || lv6Num === '3' ? 0 : 1
+    const lv6Y = lv6Num === '1' || lv6Num === '2' ? 0 : 1
     minX += lv6X * MESH.LEVEL6.DISTANCE.LNG
     maxX = minX + MESH.LEVEL6.DISTANCE.LNG
     minY += lv6Y * MESH.LEVEL6.DISTANCE.LAT
