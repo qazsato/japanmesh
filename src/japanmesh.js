@@ -64,7 +64,7 @@ function splitCodeByLevel(code) {
   return codes
 }
 
-function getLevelByCode(code) {
+function getLevel(code) {
   const digit = code.length
   switch (digit) {
     case MESH.LEVEL1.DIGIT:
@@ -230,7 +230,7 @@ function getCodes(code = null) {
     throw new Error(`'${code}' is invalid mesh code.`)
   }
   const codes = []
-  const level = getLevelByCode(code)
+  const level = getLevel(code)
   if (level === 1) {
     // 2次メッシュ
     for (let y2 = 0; y2 < MESH.LEVEL2.DIVISION.Y; y2++) {
@@ -258,5 +258,6 @@ function getCodes(code = null) {
 module.exports = {
   toCode,
   toGeoJSON,
+  getLevel,
   getCodes,
 }

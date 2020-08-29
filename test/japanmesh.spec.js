@@ -25,6 +25,11 @@ test('japanmesh.toGeoJSON', () => {
   expect(japanmesh.toGeoJSON('5438')).toEqual(geojson)
 })
 
+test('japanmesh.getLevel', () => {
+  const level = japanmesh.getLevel('53394547')
+  expect(level).toBe(3)
+})
+
 test('japanmesh.getCodes', () => {
   const codes = japanmesh.getCodes()
   expect(codes).toBe(LEVEL1_CODES)

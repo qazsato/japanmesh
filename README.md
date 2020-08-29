@@ -64,10 +64,19 @@ japanmesh.toGeoJSON('53394547')
   }
 ```
 
+### japanmesh.getLevel(code)
+
+指定した地域メッシュコードのレベルを取得します。  
+
+```javascript
+japanmesh.getLevel('53394547')
+=> 3
+```
+
 ### japanmesh.getCodes([code])
 
-指定したコードの直下の地域メッシュコードを取得します。  
-未指定時はレベル1(第１次地域区画)のコードを取得します。
+指定した地域メッシュコードの直下のレベルの地域メッシュコードを取得します。  
+未指定時はレベル1(第１次地域区画)の地域メッシュコードを取得します。
 
 ```javascript
 japanmesh.getCodes('53394547')
