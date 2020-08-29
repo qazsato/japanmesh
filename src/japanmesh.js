@@ -35,7 +35,8 @@ function isValidCode(code) {
       }
     } else if (level === 4 || level === 5 || level === 6) {
       const DIVISION_NUM = 4
-      if (Number(c.slice(-1)) > DIVISION_NUM) {
+      const xy = Number(c.slice(-1))
+      if (xy === 0 || xy > DIVISION_NUM) {
         return true
       }
     }
@@ -253,7 +254,7 @@ function getCodes(code = null) {
   } else if (level === 3 || level === 4 || level === 5) {
     // 4次,5次,6次メッシュ
     const DIVISION_NUM = 4 // 分割数(=マスの数)
-    for (let i = 0; i < DIVISION_NUM; i++) {
+    for (let i = 1; i <= DIVISION_NUM; i++) {
       codes.push(`${code}${i}`)
     }
   }
