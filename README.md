@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/qazsato/japanmesh.svg?branch=master)](https://travis-ci.org/qazsato/japanmesh)
 [![codecov](https://codecov.io/gh/qazsato/japanmesh/branch/master/graph/badge.svg)](https://codecov.io/gh/qazsato/japanmesh)
+[![npm version](https://badge.fury.io/js/japanmesh.svg)](https://badge.fury.io/js/japanmesh)
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 
 ## About
@@ -80,7 +81,7 @@ japanmesh.getLevel('53394547')
 
 ```javascript
 japanmesh.getCodes('53394547')
-=> [ '533945470', '533945471', '533945472', '533945473' ]
+=> [ '533945471', '533945472', '533945473', '533945474' ]
 ```
 
 ## License
