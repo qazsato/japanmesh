@@ -22,13 +22,15 @@ function isValidCode(code) {
         return true
       }
     } else if (level === 2) {
-      const DIVISION_NUM = MESH.LEVEL2.DIVISION.X * MESH.LEVEL2.DIVISION.Y
-      if (Number(c.slice(-2)) > DIVISION_NUM) {
+      const x = Number(c[c.length - 1])
+      const y = Number(c[c.length - 2])
+      if (x > MESH.LEVEL2.DIVISION.X || y > MESH.LEVEL2.DIVISION.Y) {
         return true
       }
     } else if (level === 3) {
-      const DIVISION_NUM = MESH.LEVEL3.DIVISION.X * MESH.LEVEL3.DIVISION.Y
-      if (Number(c.slice(-2)) > DIVISION_NUM) {
+      const x = Number(c[c.length - 1])
+      const y = Number(c[c.length - 2])
+      if (x > MESH.LEVEL3.DIVISION.X || y > MESH.LEVEL3.DIVISION.Y) {
         return true
       }
     } else if (level === 4 || level === 5 || level === 6) {
