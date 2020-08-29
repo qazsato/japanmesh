@@ -109,6 +109,13 @@ function getCodeByLevel(code, level) {
   }
 }
 
+/**
+ * 緯度経度から地域メッシュコードを取得する。
+ * 算出式 : https://www.stat.go.jp/data/mesh/pdf/gaiyo1.pdf
+ * @param {number} lat
+ * @param {number} lng
+ * @param {number} level
+ */
 function toCode(lat, lng, level) {
   // （１）緯度よりｐ，ｑ，ｒ，ｓ，ｔを算出
   const p = Math.floor((lat * 60) / 40)
@@ -120,6 +127,10 @@ function toCode(lat, lng, level) {
   const s = Math.floor(c / 15)
   const d = c % 15
   const t = Math.floor(d / 7.5)
+  // 以下、８分の１地域メッシュ算出のため拡張
+  const ee = d % 7.5
+  const uu = Math.floor(ee / 3.75)
+
   // （２）経度よりｕ，ｖ，ｗ，ｘ，ｙを算出
   const u = Math.floor(lng - 100)
   const f = lng - 100 - u
@@ -130,11 +141,18 @@ function toCode(lat, lng, level) {
   const x = Math.floor(h / 22.5)
   const i = h % 22.5
   const y = Math.floor(i / 11.25)
+  // 以下、８分の１地域メッシュ算出のため拡張
+  const jj = i % 11.25
+  const zz = Math.floor(jj / 5.625)
+
   // （３）ｓ，ｘよりｍを算出，ｔ，ｙよりｎを算出
   const m = s * 2 + (x + 1)
   const n = t * 2 + (y + 1)
-  // （４）ｐ，ｑ，ｒ，ｕ，ｖ，ｗ，ｍ、ｎより地域メッシュ・コードを算出
-  let code = `${p}${u}${q}${v}${r}${w}${m}${n}`
+  // 以下、８分の１地域メッシュ算出のため拡張
+  const oo = uu * 2 + (zz + 1)
+
+  // （４）ｐ，ｑ，ｒ，ｕ，ｖ，ｗ，ｍ、ｎ、ooより地域メッシュ・コードを算出
+  let code = `${p}${u}${q}${v}${r}${w}${m}${n}${oo}`
   if (level) {
     code = getCodeByLevel(code, level)
   }
