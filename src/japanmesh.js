@@ -153,6 +153,11 @@ function toCode(lat, lng, level) {
 
   // （４）ｐ，ｑ，ｒ，ｕ，ｖ，ｗ，ｍ、ｎ、ooより地域メッシュ・コードを算出
   let code = `${p}${u}${q}${v}${r}${w}${m}${n}${oo}`
+
+  if (isValidCode(code) === false) {
+    throw new Error(`lat: ${lat} and lng: ${lng} are invalid location.`)
+  }
+
   if (level) {
     code = getCodeByLevel(code, level)
   }
