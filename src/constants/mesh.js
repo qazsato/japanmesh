@@ -97,6 +97,45 @@ const MESH = {
       LNG: 5.625 / 60 / 60,
     },
   },
+  // 100mメッシュ
+  LEVEL_E1: {
+    DIGIT: 11,
+    DIVISION: {
+      X: 10,
+      Y: 10,
+    },
+    // 緯度: 3秒, 経度: 4.5秒
+    DISTANCE: {
+      LAT: 3 / 60 / 60,
+      LNG: 4.5 / 60 / 60,
+    },
+  },
+  // 50mメッシュ
+  LEVEL_E2: {
+    DIGIT: 12,
+    // DIVISION: {
+    //   X: 10,
+    //   Y: 10,
+    // },
+    // 緯度: 1.5秒, 経度: 2.25秒
+    DISTANCE: {
+      LAT: 1.5 / 60 / 60,
+      LNG: 2.25 / 60 / 60,
+    },
+  },
+  // 10mメッシュ
+  LEVEL_E3: {
+    DIGIT: 13,
+    // DIVISION: {
+    //   X: 10,
+    //   Y: 10,
+    // },
+    // 緯度: 0.3秒, 経度: 5秒
+    DISTANCE: {
+      LAT: 0.3 / 60 / 60,
+      LNG: 0.45 / 60 / 60,
+    },
+  },
 }
 
 module.exports = MESH

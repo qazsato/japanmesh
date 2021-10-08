@@ -2,6 +2,14 @@ const MESH = require('./constants/mesh')
 const LEVEL1_CODES = require('./constants/level1_codes')
 
 function isValidCode(code) {
+  if (isExtendedCode(code)) {
+    return isValidExtendedCode(code)
+  } else {
+    return isValidOfficialCode(code)
+  }
+}
+
+function isValidOfficialCode(code) {
   // 桁数チェック
   if (
     code.length !== MESH.LEVEL1.DIGIT &&
@@ -42,6 +50,20 @@ function isValidCode(code) {
     }
   })
   return !isInValid
+}
+
+function isValidExtendedCode(code) {
+  // 桁数チェック
+  if (
+    code.length !== MESH.LEVEL_E1.DIGIT &&
+    code.length !== MESH.LEVEL_E2.DIGIT &&
+    code.length !== MESH.LEVEL_E3.DIGIT
+  ) {
+    return false
+  }
+
+  // TODO: 判定追加
+  return true
 }
 
 function splitCodeByLevel(code) {
@@ -109,6 +131,14 @@ function getCodeByLevel(code, level) {
   }
 }
 
+function toCode(lat, lng, level) {
+  if (isExtendedLevel(level)) {
+    return toExtendedCode(lat, lng, level)
+  } else {
+    return toOfficialCode(lat, lng, level)
+  }
+}
+
 /**
  * 緯度経度から地域メッシュコードを取得する。
  * 算出式 : https://www.stat.go.jp/data/mesh/pdf/gaiyo1.pdf
@@ -116,7 +146,7 @@ function getCodeByLevel(code, level) {
  * @param {number} lng
  * @param {number} level
  */
-function toCode(lat, lng, level) {
+function toOfficialCode(lat, lng, level) {
   // （１）緯度よりｐ，ｑ，ｒ，ｓ，ｔを算出
   const p = Math.floor((lat * 60) / 40)
   const a = (lat * 60) % 40
@@ -153,6 +183,53 @@ function toCode(lat, lng, level) {
 
   // （４）ｐ，ｑ，ｒ，ｕ，ｖ，ｗ，ｍ、ｎ、ooより地域メッシュ・コードを算出
   let code = `${p}${u}${q}${v}${r}${w}${m}${n}${oo}`
+
+  if (isValidCode(code) === false) {
+    throw new Error(`lat: ${lat} and lng: ${lng} are invalid location.`)
+  }
+
+  if (level) {
+    code = getCodeByLevel(code, level)
+  }
+  return code
+}
+
+/**
+ * 緯度経度から地域メッシュコードを取得する。
+ * 算出式 : https://www.stat.go.jp/data/mesh/pdf/gaiyo1.pdf
+ * @param {number} lat
+ * @param {number} lng
+ * @param {number} level
+ */
+function toExtendedCode(lat, lng, level) {
+  // （１）緯度よりｐ，ｑ，ｒ，ｓ，ｔを算出
+  const p = Math.floor((lat * 60) / 40)
+  const a = (lat * 60) % 40
+  const q = Math.floor(a / 5)
+  const b = a % 5
+  const r = Math.floor((b * 60) / 30)
+  const c = (b * 60) % 30
+  const s = Math.floor(c / 3)
+  const d = c % 3
+  const t = Math.floor(d / 1.5)
+  const ee = d % 1.5
+  const uu = Math.floor(ee / 0.3)
+
+  // （２）経度よりｕ，ｖ，ｗ，ｘ，ｙを算出
+  const u = Math.floor(lng - 100)
+  const f = lng - 100 - u
+  const v = Math.floor((f * 60) / 7.5)
+  const g = (f * 60) % 7.5
+  const w = Math.floor((g * 60) / 45)
+  const h = (g * 60) % 45
+  const x = Math.floor(h / 4.5)
+  const i = h % 4.5
+  const y = Math.floor(i / 2.25)
+  const jj = i % 2.25
+  const zz = Math.floor(jj / 0.45)
+
+  // （４）ｐ，ｑ，ｒ，ｕ，ｖ，ｗ，ｍ、ｎより地域メッシュ・コードを算出
+  let code = `E${p}${u}${q}${v}${r}${w}${s}${x}${t}${y}${uu}${zz}`
 
   if (isValidCode(code) === false) {
     throw new Error(`lat: ${lat} and lng: ${lng} are invalid location.`)
@@ -282,6 +359,14 @@ function getCodes(code = null) {
     }
   }
   return codes
+}
+
+function isExtendedCode(code) {
+  return code.startsWith('E')
+}
+
+function isExtendedLevel(level) {
+  return String(level).startsWith('E')
 }
 
 module.exports = {
