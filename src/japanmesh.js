@@ -1,15 +1,15 @@
 const MESH = require('./constants/mesh')
-const LEVEL1_CODES = require('./constants/level1_codes')
+const LEVEL_80000_CODES = require('./constants/level_80000_codes')
 
 function isValidCode(code) {
   // 桁数チェック
   if (
-    code.length !== MESH.LEVEL1.DIGIT &&
-    code.length !== MESH.LEVEL2.DIGIT &&
-    code.length !== MESH.LEVEL3.DIGIT &&
-    code.length !== MESH.LEVEL4.DIGIT &&
-    code.length !== MESH.LEVEL5.DIGIT &&
-    code.length !== MESH.LEVEL6.DIGIT
+    code.length !== MESH.LEVEL_80000.DIGIT &&
+    code.length !== MESH.LEVEL_10000.DIGIT &&
+    code.length !== MESH.LEVEL_1000.DIGIT &&
+    code.length !== MESH.LEVEL_500.DIGIT &&
+    code.length !== MESH.LEVEL_250.DIGIT &&
+    code.length !== MESH.LEVEL_125.DIGIT
   ) {
     return false
   }
@@ -17,23 +17,23 @@ function isValidCode(code) {
   const codes = splitCodeByLevel(code)
   const isInValid = codes.some((c, i) => {
     const level = i + 1
-    if (level === 1) {
-      if (!LEVEL1_CODES.includes(c)) {
+    if (level === 80000) {
+      if (!LEVEL_80000_CODES.includes(c)) {
         return true
       }
-    } else if (level === 2) {
+    } else if (level === 10000) {
       const x = Number(c[c.length - 1])
       const y = Number(c[c.length - 2])
-      if (x > MESH.LEVEL2.DIVISION.X || y > MESH.LEVEL2.DIVISION.Y) {
+      if (x > MESH.LEVEL_10000.DIVISION.X || y > MESH.LEVEL_10000.DIVISION.Y) {
         return true
       }
-    } else if (level === 3) {
+    } else if (level === 1000) {
       const x = Number(c[c.length - 1])
       const y = Number(c[c.length - 2])
-      if (x > MESH.LEVEL3.DIVISION.X || y > MESH.LEVEL3.DIVISION.Y) {
+      if (x > MESH.LEVEL_1000.DIVISION.X || y > MESH.LEVEL_1000.DIVISION.Y) {
         return true
       }
-    } else if (level === 4 || level === 5 || level === 6) {
+    } else if (level === 500 || level === 250 || level === 125) {
       const DIVISION_NUM = 4
       const xy = Number(c.slice(-1))
       if (xy === 0 || xy > DIVISION_NUM) {
@@ -46,23 +46,23 @@ function isValidCode(code) {
 
 function splitCodeByLevel(code) {
   const codes = []
-  if (code.length >= MESH.LEVEL1.DIGIT) {
-    codes.push(code.slice(0, MESH.LEVEL1.DIGIT))
+  if (code.length >= MESH.LEVEL_80000.DIGIT) {
+    codes.push(code.slice(0, MESH.LEVEL_80000.DIGIT))
   }
-  if (code.length >= MESH.LEVEL2.DIGIT) {
-    codes.push(code.slice(0, MESH.LEVEL2.DIGIT))
+  if (code.length >= MESH.LEVEL_10000.DIGIT) {
+    codes.push(code.slice(0, MESH.LEVEL_10000.DIGIT))
   }
-  if (code.length >= MESH.LEVEL3.DIGIT) {
-    codes.push(code.slice(0, MESH.LEVEL3.DIGIT))
+  if (code.length >= MESH.LEVEL_1000.DIGIT) {
+    codes.push(code.slice(0, MESH.LEVEL_1000.DIGIT))
   }
-  if (code.length >= MESH.LEVEL4.DIGIT) {
-    codes.push(code.slice(0, MESH.LEVEL4.DIGIT))
+  if (code.length >= MESH.LEVEL_500.DIGIT) {
+    codes.push(code.slice(0, MESH.LEVEL_500.DIGIT))
   }
-  if (code.length >= MESH.LEVEL5.DIGIT) {
-    codes.push(code.slice(0, MESH.LEVEL5.DIGIT))
+  if (code.length >= MESH.LEVEL_250.DIGIT) {
+    codes.push(code.slice(0, MESH.LEVEL_250.DIGIT))
   }
-  if (code.length >= MESH.LEVEL6.DIGIT) {
-    codes.push(code.slice(0, MESH.LEVEL6.DIGIT))
+  if (code.length >= MESH.LEVEL_125.DIGIT) {
+    codes.push(code.slice(0, MESH.LEVEL_125.DIGIT))
   }
   return codes
 }
@@ -73,18 +73,18 @@ function getLevel(code = null) {
   }
   const digit = code.length
   switch (digit) {
-    case MESH.LEVEL1.DIGIT:
-      return 1
-    case MESH.LEVEL2.DIGIT:
-      return 2
-    case MESH.LEVEL3.DIGIT:
-      return 3
-    case MESH.LEVEL4.DIGIT:
-      return 4
-    case MESH.LEVEL5.DIGIT:
-      return 5
-    case MESH.LEVEL6.DIGIT:
-      return 6
+    case MESH.LEVEL_80000.DIGIT:
+      return 80000
+    case MESH.LEVEL_10000.DIGIT:
+      return 10000
+    case MESH.LEVEL_1000.DIGIT:
+      return 1000
+    case MESH.LEVEL_500.DIGIT:
+      return 500
+    case MESH.LEVEL_250.DIGIT:
+      return 250
+    case MESH.LEVEL_125.DIGIT:
+      return 125
     default:
       return null
   }
@@ -92,18 +92,18 @@ function getLevel(code = null) {
 
 function getCodeByLevel(code, level) {
   switch (level) {
-    case 1:
-      return code.slice(0, MESH.LEVEL1.DIGIT)
-    case 2:
-      return code.slice(0, MESH.LEVEL2.DIGIT)
-    case 3:
-      return code.slice(0, MESH.LEVEL3.DIGIT)
-    case 4:
-      return code.slice(0, MESH.LEVEL4.DIGIT)
-    case 5:
-      return code.slice(0, MESH.LEVEL5.DIGIT)
-    case 6:
-      return code.slice(0, MESH.LEVEL6.DIGIT)
+    case 80000:
+      return code.slice(0, MESH.LEVEL_80000.DIGIT)
+    case 10000:
+      return code.slice(0, MESH.LEVEL_10000.DIGIT)
+    case 1000:
+      return code.slice(0, MESH.LEVEL_1000.DIGIT)
+    case 500:
+      return code.slice(0, MESH.LEVEL_500.DIGIT)
+    case 250:
+      return code.slice(0, MESH.LEVEL_250.DIGIT)
+    case 125:
+      return code.slice(0, MESH.LEVEL_125.DIGIT)
     default:
       return code
   }
@@ -168,68 +168,70 @@ function toGeoJSON(code, properties) {
   if (isValidCode(code) === false) {
     throw new Error(`'${code}' is invalid mesh code.`)
   }
-  const lv1X = code.slice(2, 4)
-  const lv1Y = code.slice(0, 2)
+  const lv80000X = code.slice(2, 4)
+  const lv80000Y = code.slice(0, 2)
 
   let minX, maxX, minY, maxY
 
-  if (code.length >= MESH.LEVEL1.DIGIT) {
+  if (code.length >= MESH.LEVEL_80000.DIGIT) {
     minX =
-      MESH.LEVEL1.SECTION.LNG.MIN +
-      (lv1X - MESH.LEVEL1.SECTION.X.MIN) * MESH.LEVEL1.DISTANCE.LNG
-    maxX = minX + MESH.LEVEL1.DISTANCE.LNG
+      MESH.LEVEL_80000.SECTION.LNG.MIN +
+      (lv80000X - MESH.LEVEL_80000.SECTION.X.MIN) *
+        MESH.LEVEL_80000.DISTANCE.LNG
+    maxX = minX + MESH.LEVEL_80000.DISTANCE.LNG
     minY =
-      MESH.LEVEL1.SECTION.LAT.MIN +
-      (lv1Y - MESH.LEVEL1.SECTION.Y.MIN) * MESH.LEVEL1.DISTANCE.LAT
-    maxY = minY + MESH.LEVEL1.DISTANCE.LAT
+      MESH.LEVEL_80000.SECTION.LAT.MIN +
+      (lv80000Y - MESH.LEVEL_80000.SECTION.Y.MIN) *
+        MESH.LEVEL_80000.DISTANCE.LAT
+    maxY = minY + MESH.LEVEL_80000.DISTANCE.LAT
   }
 
-  if (code.length >= MESH.LEVEL2.DIGIT) {
-    const lv2X = code.slice(5, 6)
-    const lv2Y = code.slice(4, 5)
-    minX += lv2X * MESH.LEVEL2.DISTANCE.LNG
-    maxX = minX + MESH.LEVEL2.DISTANCE.LNG
-    minY += lv2Y * MESH.LEVEL2.DISTANCE.LAT
-    maxY = minY + MESH.LEVEL2.DISTANCE.LAT
+  if (code.length >= MESH.LEVEL_10000.DIGIT) {
+    const lv10000X = code.slice(5, 6)
+    const lv10000Y = code.slice(4, 5)
+    minX += lv10000X * MESH.LEVEL_10000.DISTANCE.LNG
+    maxX = minX + MESH.LEVEL_10000.DISTANCE.LNG
+    minY += lv10000Y * MESH.LEVEL_10000.DISTANCE.LAT
+    maxY = minY + MESH.LEVEL_10000.DISTANCE.LAT
   }
 
-  if (code.length >= MESH.LEVEL3.DIGIT) {
-    const lv3X = code.slice(7, 8)
-    const lv3Y = code.slice(6, 7)
-    minX += lv3X * MESH.LEVEL3.DISTANCE.LNG
-    maxX = minX + MESH.LEVEL3.DISTANCE.LNG
-    minY += lv3Y * MESH.LEVEL3.DISTANCE.LAT
-    maxY = minY + MESH.LEVEL3.DISTANCE.LAT
+  if (code.length >= MESH.LEVEL_1000.DIGIT) {
+    const lv1000X = code.slice(7, 8)
+    const lv1000Y = code.slice(6, 7)
+    minX += lv1000X * MESH.LEVEL_1000.DISTANCE.LNG
+    maxX = minX + MESH.LEVEL_1000.DISTANCE.LNG
+    minY += lv1000Y * MESH.LEVEL_1000.DISTANCE.LAT
+    maxY = minY + MESH.LEVEL_1000.DISTANCE.LAT
   }
 
-  if (code.length >= MESH.LEVEL4.DIGIT) {
-    const lv4Num = code.slice(8, 9)
-    const lv4X = lv4Num === '1' || lv4Num === '3' ? 0 : 1
-    const lv4Y = lv4Num === '1' || lv4Num === '2' ? 0 : 1
-    minX += lv4X * MESH.LEVEL4.DISTANCE.LNG
-    maxX = minX + MESH.LEVEL4.DISTANCE.LNG
-    minY += lv4Y * MESH.LEVEL4.DISTANCE.LAT
-    maxY = minY + MESH.LEVEL4.DISTANCE.LAT
+  if (code.length >= MESH.LEVEL_500.DIGIT) {
+    const lv500Num = code.slice(8, 9)
+    const lv500X = lv500Num === '1' || lv500Num === '3' ? 0 : 1
+    const lv500Y = lv500Num === '1' || lv500Num === '2' ? 0 : 1
+    minX += lv500X * MESH.LEVEL_500.DISTANCE.LNG
+    maxX = minX + MESH.LEVEL_500.DISTANCE.LNG
+    minY += lv500Y * MESH.LEVEL_500.DISTANCE.LAT
+    maxY = minY + MESH.LEVEL_500.DISTANCE.LAT
   }
 
-  if (code.length >= MESH.LEVEL5.DIGIT) {
-    const lv5Num = code.slice(9, 10)
-    const lv5X = lv5Num === '1' || lv5Num === '3' ? 0 : 1
-    const lv5Y = lv5Num === '1' || lv5Num === '2' ? 0 : 1
-    minX += lv5X * MESH.LEVEL5.DISTANCE.LNG
-    maxX = minX + MESH.LEVEL5.DISTANCE.LNG
-    minY += lv5Y * MESH.LEVEL5.DISTANCE.LAT
-    maxY = minY + MESH.LEVEL5.DISTANCE.LAT
+  if (code.length >= MESH.LEVEL_250.DIGIT) {
+    const lv250Num = code.slice(9, 10)
+    const lv250X = lv250Num === '1' || lv250Num === '3' ? 0 : 1
+    const lv250Y = lv250Num === '1' || lv250Num === '2' ? 0 : 1
+    minX += lv250X * MESH.LEVEL_250.DISTANCE.LNG
+    maxX = minX + MESH.LEVEL_250.DISTANCE.LNG
+    minY += lv250Y * MESH.LEVEL_250.DISTANCE.LAT
+    maxY = minY + MESH.LEVEL_250.DISTANCE.LAT
   }
 
-  if (code.length >= MESH.LEVEL6.DIGIT) {
-    const lv6Num = code.slice(10, 11)
-    const lv6X = lv6Num === '1' || lv6Num === '3' ? 0 : 1
-    const lv6Y = lv6Num === '1' || lv6Num === '2' ? 0 : 1
-    minX += lv6X * MESH.LEVEL6.DISTANCE.LNG
-    maxX = minX + MESH.LEVEL6.DISTANCE.LNG
-    minY += lv6Y * MESH.LEVEL6.DISTANCE.LAT
-    maxY = minY + MESH.LEVEL6.DISTANCE.LAT
+  if (code.length >= MESH.LEVEL_125.DIGIT) {
+    const lv125Num = code.slice(10, 11)
+    const lv125X = lv125Num === '1' || lv125Num === '3' ? 0 : 1
+    const lv125Y = lv125Num === '1' || lv125Num === '2' ? 0 : 1
+    minX += lv125X * MESH.LEVEL_125.DISTANCE.LNG
+    maxX = minX + MESH.LEVEL_125.DISTANCE.LNG
+    minY += lv125Y * MESH.LEVEL_125.DISTANCE.LAT
+    maxY = minY + MESH.LEVEL_125.DISTANCE.LAT
   }
   return createGeoJSON(minX, maxX, minY, maxY, properties)
 }
@@ -253,28 +255,28 @@ function createGeoJSON(minX, maxX, minY, maxY, properties = {}) {
 
 function getCodes(code = null) {
   if (code === null) {
-    return LEVEL1_CODES
+    return LEVEL_80000_CODES
   }
   if (isValidCode(code) === false) {
     throw new Error(`'${code}' is invalid mesh code.`)
   }
   const codes = []
   const level = getLevel(code)
-  if (level === 1) {
+  if (level === 80000) {
     // 2次メッシュ
-    for (let y2 = 0; y2 < MESH.LEVEL2.DIVISION.Y; y2++) {
-      for (let x2 = 0; x2 < MESH.LEVEL2.DIVISION.X; x2++) {
+    for (let y2 = 0; y2 < MESH.LEVEL_10000.DIVISION.Y; y2++) {
+      for (let x2 = 0; x2 < MESH.LEVEL_10000.DIVISION.X; x2++) {
         codes.push(`${code}${y2}${x2}`)
       }
     }
-  } else if (level === 2) {
+  } else if (level === 10000) {
     // 3次メッシュ
-    for (let y3 = 0; y3 < MESH.LEVEL3.DIVISION.Y; y3++) {
-      for (let x3 = 0; x3 < MESH.LEVEL3.DIVISION.X; x3++) {
+    for (let y3 = 0; y3 < MESH.LEVEL_1000.DIVISION.Y; y3++) {
+      for (let x3 = 0; x3 < MESH.LEVEL_1000.DIVISION.X; x3++) {
         codes.push(`${code}${y3}${x3}`)
       }
     }
-  } else if (level === 3 || level === 4 || level === 5) {
+  } else if (level === 1000 || level === 500 || level === 250) {
     // 4次,5次,6次メッシュ
     const DIVISION_NUM = 4 // 分割数(=マスの数)
     for (let i = 1; i <= DIVISION_NUM; i++) {
