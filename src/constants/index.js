@@ -1,0 +1,5 @@
+const AVAILABLE_LEVELS = [80000, 10000, 5000, 2000, 1000, 500, 250, 125]
+
+module.exports = {
+  AVAILABLE_LEVELS,
+}
