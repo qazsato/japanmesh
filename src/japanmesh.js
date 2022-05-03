@@ -425,6 +425,7 @@ module.exports = {
   toGeoJSON,
   getLevel,
   getCodes,
+  isContain,
 }
 
 // 後で整理
@@ -449,25 +450,37 @@ function isContain(codeA, codeB) {
   const aCoords = toGeoJSON(codeA).geometry.coordinates[0]
   const bCoords = toGeoJSON(codeB).geometry.coordinates[0]
 
-  const aMinX = aCoords.map((c) => c[0]).reduce((a, b) => Math.min(a, b))
-  const aMaxX = aCoords.map((c) => c[0]).reduce((a, b) => Math.max(a, b))
-  const aMinY = aCoords.map((c) => c[1]).reduce((a, b) => Math.min(a, b))
-  const aMaxY = aCoords.map((c) => c[1]).reduce((a, b) => Math.max(a, b))
+  // TODO: ここら辺の四捨五入がうまくいっていない
+  // japanmesh.isContain('5339703', '533970805') の出力が全て0になる
+  const base = 0.0000001
+  const aX = aCoords.map((c) => Math.round(c[0] * base) / base)
+  const aY = aCoords.map((c) => Math.round(c[1] * base) / base)
 
-  const fBCoords = bCoords.filter((coord) => {
-    const x = coord[0]
-    const y = coord[1]
+  const aMinX = aX.reduce((a, b) => Math.min(a, b))
+  const aMaxX = aX.reduce((a, b) => Math.max(a, b))
+  const aMinY = aY.reduce((a, b) => Math.min(a, b))
+  const aMaxY = aY.reduce((a, b) => Math.max(a, b))
+
+  const filteredBCoords = bCoords.filter((coord) => {
+    const x = Math.round(coord[0] * base) / base
+    const y = Math.round(coord[1] * base) / base
     return aMinX <= x && x <= aMaxX && aMinY <= y && y <= aMaxY
   })
 
-  if (fBCoords.length === 0) {
+  if (filteredBCoords.length === 0) {
     return false
   }
 
-  const fBMinX = fBCoords.map((c) => c[0]).reduce((a, b) => Math.min(a, b))
-  const fBMaxX = fBCoords.map((c) => c[0]).reduce((a, b) => Math.max(a, b))
-  const fBMinY = fBCoords.map((c) => c[1]).reduce((a, b) => Math.min(a, b))
-  const fBMaxY = fBCoords.map((c) => c[1]).reduce((a, b) => Math.max(a, b))
+  const fBX = filteredBCoords.map((c) => Math.round(c[0] * base) / base)
+  const fBY = filteredBCoords.map((c) => Math.round(c[1] * base) / base)
+  const fBMinX = fBX.reduce((a, b) => Math.min(a, b))
+  const fBMaxX = fBX.reduce((a, b) => Math.max(a, b))
+  const fBMinY = fBY.reduce((a, b) => Math.min(a, b))
+  const fBMaxY = fBY.reduce((a, b) => Math.max(a, b))
+
+  console.log(filteredBCoords)
+  console.log(fBX, fBY)
+  console.log(fBMinX, fBMaxX, fBMinY, fBMaxY)
 
   return fBMinX !== fBMaxX && fBMinY !== fBMaxY
 }
