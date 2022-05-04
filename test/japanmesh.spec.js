@@ -1,5 +1,5 @@
-const japanmesh = require('./../index')
-const LEVEL1_CODES = require('./../src/constants/level1_codes')
+const japanmesh = require('./../dist/index')
+const LEVEL1_CODES = require('./../dist/constants/level1_codes').LEVEL1_CODES
 
 test('japanmesh.toCode', () => {
   expect(japanmesh.toCode(35.70078, 139.71475, 1)).toBe('5339')
