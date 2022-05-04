@@ -1,7 +1,7 @@
-const MESH = require('./constants/mesh')
-const LEVEL1_CODES = require('./constants/level1_codes')
+import { MESH } from './constants/mesh'
+import { LEVEL1_CODES } from './constants/level1_codes'
 
-function isValidCode(code) {
+function isValidCode(code: string) {
   // 桁数チェック
   if (
     code.length !== MESH.LEVEL1.DIGIT &&
@@ -44,7 +44,7 @@ function isValidCode(code) {
   return !isInValid
 }
 
-function splitCodeByLevel(code) {
+function splitCodeByLevel(code: string) {
   const codes = []
   if (code.length >= MESH.LEVEL1.DIGIT) {
     codes.push(code.slice(0, MESH.LEVEL1.DIGIT))
@@ -67,7 +67,7 @@ function splitCodeByLevel(code) {
   return codes
 }
 
-function getLevel(code = null) {
+function getLevel(code: (string | null) = null) {
   if (code === null) {
     return null
   }
@@ -90,7 +90,7 @@ function getLevel(code = null) {
   }
 }
 
-function getCodeByLevel(code, level) {
+function getCodeByLevel(code: string, level: number) {
   switch (level) {
     case 1:
       return code.slice(0, MESH.LEVEL1.DIGIT)
@@ -112,11 +112,8 @@ function getCodeByLevel(code, level) {
 /**
  * 緯度経度から地域メッシュコードを取得する。
  * 算出式 : https://www.stat.go.jp/data/mesh/pdf/gaiyo1.pdf
- * @param {number} lat
- * @param {number} lng
- * @param {number} level
  */
-function toCode(lat, lng, level) {
+function toCode(lat: number, lng: number, level: number) {
   // （１）緯度よりｐ，ｑ，ｒ，ｓ，ｔを算出
   const p = Math.floor((lat * 60) / 40)
   const a = (lat * 60) % 40
@@ -164,14 +161,17 @@ function toCode(lat, lng, level) {
   return code
 }
 
-function toGeoJSON(code, properties) {
+function toGeoJSON(code: string, properties: object) {
   if (isValidCode(code) === false) {
     throw new Error(`'${code}' is invalid mesh code.`)
   }
-  const lv1X = code.slice(2, 4)
-  const lv1Y = code.slice(0, 2)
+  const lv1X = Number(code.slice(2, 4))
+  const lv1Y = Number(code.slice(0, 2))
 
-  let minX, maxX, minY, maxY
+  let minX = 0
+  let maxX = 0
+  let minY = 0
+  let maxY = 0
 
   if (code.length >= MESH.LEVEL1.DIGIT) {
     minX =
@@ -185,8 +185,8 @@ function toGeoJSON(code, properties) {
   }
 
   if (code.length >= MESH.LEVEL2.DIGIT) {
-    const lv2X = code.slice(5, 6)
-    const lv2Y = code.slice(4, 5)
+    const lv2X = Number(code.slice(5, 6))
+    const lv2Y = Number(code.slice(4, 5))
     minX += lv2X * MESH.LEVEL2.DISTANCE.LNG
     maxX = minX + MESH.LEVEL2.DISTANCE.LNG
     minY += lv2Y * MESH.LEVEL2.DISTANCE.LAT
@@ -194,8 +194,8 @@ function toGeoJSON(code, properties) {
   }
 
   if (code.length >= MESH.LEVEL3.DIGIT) {
-    const lv3X = code.slice(7, 8)
-    const lv3Y = code.slice(6, 7)
+    const lv3X = Number(code.slice(7, 8))
+    const lv3Y = Number(code.slice(6, 7))
     minX += lv3X * MESH.LEVEL3.DISTANCE.LNG
     maxX = minX + MESH.LEVEL3.DISTANCE.LNG
     minY += lv3Y * MESH.LEVEL3.DISTANCE.LAT
@@ -234,7 +234,7 @@ function toGeoJSON(code, properties) {
   return createGeoJSON(minX, maxX, minY, maxY, properties)
 }
 
-function createGeoJSON(minX, maxX, minY, maxY, properties = {}) {
+function createGeoJSON(minX: number, maxX: number, minY: number, maxY: number, properties = {}) {
   const ne = [maxX, maxY]
   const nw = [minX, maxY]
   const sw = [minX, minY]
@@ -284,7 +284,7 @@ function getCodes(code = null) {
   return codes
 }
 
-module.exports = {
+export default {
   toCode,
   toGeoJSON,
   getLevel,
