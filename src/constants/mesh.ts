@@ -1,4 +1,4 @@
-const MESH = {
+export const MESH = {
   // 第１次地域区画
   LEVEL1: {
     DIGIT: 4, // コード桁数
@@ -98,5 +98,3 @@ const MESH = {
     },
   },
 }
-
-module.exports = MESH
