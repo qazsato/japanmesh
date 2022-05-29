@@ -1,7 +1,6 @@
 # japanmesh
 
-[![Build Status](https://travis-ci.org/qazsato/japanmesh.svg?branch=master)](https://travis-ci.org/qazsato/japanmesh)
-[![codecov](https://codecov.io/gh/qazsato/japanmesh/branch/master/graph/badge.svg)](https://codecov.io/gh/qazsato/japanmesh)
+![execute test](https://github.com/qazsato/japanmesh/actions/workflows/execute-test.yml/badge.svg)
 [![npm version](https://badge.fury.io/js/japanmesh.svg)](https://badge.fury.io/js/japanmesh)
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 

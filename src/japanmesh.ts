@@ -67,7 +67,7 @@ function splitCodeByLevel(code: string) {
   return codes
 }
 
-function getLevel(code: (string | null) = null) {
+function getLevel(code: string | null = null) {
   if (code === null) {
     return null
   }
@@ -113,7 +113,7 @@ function getCodeByLevel(code: string, level: number) {
  * 緯度経度から地域メッシュコードを取得する。
  * 算出式 : https://www.stat.go.jp/data/mesh/pdf/gaiyo1.pdf
  */
-function toCode(lat: number, lng: number, level: number) {
+function toCode(lat: number, lng: number, level: number | null = null) {
   // （１）緯度よりｐ，ｑ，ｒ，ｓ，ｔを算出
   const p = Math.floor((lat * 60) / 40)
   const a = (lat * 60) % 40
@@ -161,7 +161,7 @@ function toCode(lat: number, lng: number, level: number) {
   return code
 }
 
-function toGeoJSON(code: string, properties: object) {
+function toGeoJSON(code: string, properties: object = {}) {
   if (isValidCode(code) === false) {
     throw new Error(`'${code}' is invalid mesh code.`)
   }
@@ -234,7 +234,13 @@ function toGeoJSON(code: string, properties: object) {
   return createGeoJSON(minX, maxX, minY, maxY, properties)
 }
 
-function createGeoJSON(minX: number, maxX: number, minY: number, maxY: number, properties = {}) {
+function createGeoJSON(
+  minX: number,
+  maxX: number,
+  minY: number,
+  maxY: number,
+  properties = {}
+) {
   const ne = [maxX, maxY]
   const nw = [minX, maxY]
   const sw = [minX, minY]
@@ -251,7 +257,7 @@ function createGeoJSON(minX: number, maxX: number, minY: number, maxY: number, p
   }
 }
 
-function getCodes(code = null) {
+function getCodes(code: string | null = null) {
   if (code === null) {
     return LEVEL1_CODES
   }
