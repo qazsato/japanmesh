@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const japanmesh = require('./../dist/index')
 const LEVEL1_CODES = require('./../dist/constants/level1_codes').LEVEL1_CODES
 
