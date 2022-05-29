@@ -2,8 +2,8 @@
   "name": "japanmesh",
   "version": "0.2.1",
   "description": "",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/japanmesh.js",
+  "types": "dist/japanmesh.d.ts",
   "scripts": {
     "test": "jest",
     "lint": "eslint --ext .ts --ignore-path .gitignore .",
