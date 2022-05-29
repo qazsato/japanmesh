@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-const japanmesh = require('./../dist/index')
-const LEVEL1_CODES = require('./../dist/constants/level1_codes').LEVEL1_CODES
+import japanmesh from '../src/japanmesh'
+import { LEVEL1_CODES } from '../src/constants/level1_codes'
 
 test('japanmesh.toCode', () => {
   expect(japanmesh.toCode(35.70078, 139.71475, 1)).toBe('5339')
