@@ -1,6 +1,6 @@
 // 第１次地域区画の全メッシュコード
 // https://www.e-stat.go.jp/pdf/gis/primary_mesh_jouhou.pdf
-export const LEVEL1_CODES = [
+export const LEVEL_80000_CODES = [
   '3036',
   '3622',
   '3623',

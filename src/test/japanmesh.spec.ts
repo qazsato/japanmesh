@@ -1,18 +1,18 @@
 import japanmesh from '../japanmesh'
-import { LEVEL1_CODES } from '../constants/level1_codes'
+import { LEVEL_80000_CODES } from '../constants/level_80000_codes'
 
 test('japanmesh.toCode', () => {
-  expect(japanmesh.toCode(35.70078, 139.71475, 1)).toBe('5339')
-  expect(japanmesh.toCode(35.70078, 139.71475, 2)).toBe('533945')
-  expect(japanmesh.toCode(35.70078, 139.71475, 3)).toBe('53394547')
-  expect(japanmesh.toCode(35.70078, 139.71475, 4)).toBe('533945471')
-  expect(japanmesh.toCode(35.70078, 139.71475, 5)).toBe('5339454711')
-  expect(japanmesh.toCode(35.70078, 139.71475, 6)).toBe('53394547112')
+  expect(japanmesh.toCode(35.70078, 139.71475, 80000)).toBe('5339')
+  expect(japanmesh.toCode(35.70078, 139.71475, 10000)).toBe('533945')
+  expect(japanmesh.toCode(35.70078, 139.71475, 1000)).toBe('53394547')
+  expect(japanmesh.toCode(35.70078, 139.71475, 500)).toBe('533945471')
+  expect(japanmesh.toCode(35.70078, 139.71475, 250)).toBe('5339454711')
+  expect(japanmesh.toCode(35.70078, 139.71475, 125)).toBe('53394547112')
   expect(japanmesh.toCode(35.70078, 139.71475)).toBe('53394547112')
 })
 
 test('japanmesh.toGeoJSON', () => {
-  const jsonLv1 = {
+  const jsonLv80000 = {
     type: 'Feature',
     properties: {},
     geometry: {
@@ -28,7 +28,7 @@ test('japanmesh.toGeoJSON', () => {
       ],
     },
   }
-  const jsonLv2 = {
+  const jsonLv10000 = {
     type: 'Feature',
     properties: {},
     geometry: {
@@ -44,7 +44,7 @@ test('japanmesh.toGeoJSON', () => {
       ],
     },
   }
-  const jsonLv3 = {
+  const jsonLv1000 = {
     type: 'Feature',
     properties: {},
     geometry: {
@@ -60,7 +60,7 @@ test('japanmesh.toGeoJSON', () => {
       ],
     },
   }
-  const jsonLv4 = {
+  const jsonLv500 = {
     type: 'Feature',
     properties: {},
     geometry: {
@@ -76,7 +76,7 @@ test('japanmesh.toGeoJSON', () => {
       ],
     },
   }
-  const jsonLv5 = {
+  const jsonLv250 = {
     type: 'Feature',
     properties: {},
     geometry: {
@@ -92,7 +92,7 @@ test('japanmesh.toGeoJSON', () => {
       ],
     },
   }
-  const jsonLv6 = {
+  const jsonLv125 = {
     type: 'Feature',
     properties: {},
     geometry: {
@@ -108,27 +108,27 @@ test('japanmesh.toGeoJSON', () => {
       ],
     },
   }
-  expect(japanmesh.toGeoJSON('5438')).toEqual(jsonLv1)
-  expect(japanmesh.toGeoJSON('533945')).toEqual(jsonLv2)
-  expect(japanmesh.toGeoJSON('53394547')).toEqual(jsonLv3)
-  expect(japanmesh.toGeoJSON('533945471')).toEqual(jsonLv4)
-  expect(japanmesh.toGeoJSON('5339454711')).toEqual(jsonLv5)
-  expect(japanmesh.toGeoJSON('53394547112')).toEqual(jsonLv6)
+  expect(japanmesh.toGeoJSON('5438')).toEqual(jsonLv80000)
+  expect(japanmesh.toGeoJSON('533945')).toEqual(jsonLv10000)
+  expect(japanmesh.toGeoJSON('53394547')).toEqual(jsonLv1000)
+  expect(japanmesh.toGeoJSON('533945471')).toEqual(jsonLv500)
+  expect(japanmesh.toGeoJSON('5339454711')).toEqual(jsonLv250)
+  expect(japanmesh.toGeoJSON('53394547112')).toEqual(jsonLv125)
 })
 
 test('japanmesh.getLevel', () => {
-  expect(japanmesh.getLevel('5339')).toBe(1)
-  expect(japanmesh.getLevel('533945')).toBe(2)
-  expect(japanmesh.getLevel('53394547')).toBe(3)
-  expect(japanmesh.getLevel('533945471')).toBe(4)
-  expect(japanmesh.getLevel('5339454711')).toBe(5)
-  expect(japanmesh.getLevel('53394547112')).toBe(6)
+  expect(japanmesh.getLevel('5339')).toBe(80000)
+  expect(japanmesh.getLevel('533945')).toBe(10000)
+  expect(japanmesh.getLevel('53394547')).toBe(1000)
+  expect(japanmesh.getLevel('533945471')).toBe(500)
+  expect(japanmesh.getLevel('5339454711')).toBe(250)
+  expect(japanmesh.getLevel('53394547112')).toBe(125)
   expect(japanmesh.getLevel('1')).toBe(null)
 })
 
 test('japanmesh.getCodes', () => {
-  expect(japanmesh.getCodes()).toEqual(LEVEL1_CODES)
-  const lv2Codes = [
+  expect(japanmesh.getCodes()).toEqual(LEVEL_80000_CODES)
+  const lv10000Codes = [
     '533900',
     '533901',
     '533902',
@@ -194,9 +194,9 @@ test('japanmesh.getCodes', () => {
     '533976',
     '533977',
   ]
-  expect(japanmesh.getCodes('5339')).toEqual(lv2Codes)
+  expect(japanmesh.getCodes('5339')).toEqual(lv10000Codes)
 
-  const lv3Codes = [
+  const lv1000Codes = [
     '53394500',
     '53394501',
     '53394502',
@@ -298,14 +298,19 @@ test('japanmesh.getCodes', () => {
     '53394598',
     '53394599',
   ]
-  expect(japanmesh.getCodes('533945')).toEqual(lv3Codes)
+  expect(japanmesh.getCodes('533945')).toEqual(lv1000Codes)
 
-  const lv4Codes = ['533945471', '533945472', '533945473', '533945474']
-  expect(japanmesh.getCodes('53394547')).toEqual(lv4Codes)
+  const lv500Codes = ['533945471', '533945472', '533945473', '533945474']
+  expect(japanmesh.getCodes('53394547')).toEqual(lv500Codes)
 
-  const lv5Codes = ['5339454711', '5339454712', '5339454713', '5339454714']
-  expect(japanmesh.getCodes('533945471')).toEqual(lv5Codes)
+  const lv250Codes = ['5339454711', '5339454712', '5339454713', '5339454714']
+  expect(japanmesh.getCodes('533945471')).toEqual(lv250Codes)
 
-  const lv6Codes = ['53394547111', '53394547112', '53394547113', '53394547114']
-  expect(japanmesh.getCodes('5339454711')).toEqual(lv6Codes)
+  const lv125Codes = [
+    '53394547111',
+    '53394547112',
+    '53394547113',
+    '53394547114',
+  ]
+  expect(japanmesh.getCodes('5339454711')).toEqual(lv125Codes)
 })

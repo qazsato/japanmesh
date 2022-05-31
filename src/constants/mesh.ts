@@ -1,6 +1,6 @@
 export const MESH = {
   // 第１次地域区画
-  LEVEL1: {
+  LEVEL_80000: {
     DIGIT: 4, // コード桁数
     DIVISION: {
       // メッシュ分割数
@@ -33,7 +33,7 @@ export const MESH = {
     },
   },
   // 第２次地域区画
-  LEVEL2: {
+  LEVEL_10000: {
     DIGIT: 6,
     DIVISION: {
       X: 8,
@@ -46,7 +46,7 @@ export const MESH = {
     },
   },
   // 基準地域メッシュ(第３次地域区画)
-  LEVEL3: {
+  LEVEL_1000: {
     DIGIT: 8,
     DIVISION: {
       X: 10,
@@ -59,7 +59,7 @@ export const MESH = {
     },
   },
   // ２分の１地域メッシュ
-  LEVEL4: {
+  LEVEL_500: {
     DIGIT: 9,
     DIVISION: {
       X: 2,
@@ -72,7 +72,7 @@ export const MESH = {
     },
   },
   // ４分の１地域メッシュ
-  LEVEL5: {
+  LEVEL_250: {
     DIGIT: 10,
     DIVISION: {
       X: 2,
@@ -85,7 +85,7 @@ export const MESH = {
     },
   },
   // ８分の１地域メッシュ
-  LEVEL6: {
+  LEVEL_125: {
     DIGIT: 11,
     DIVISION: {
       X: 2,
