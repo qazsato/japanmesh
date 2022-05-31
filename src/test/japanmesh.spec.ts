@@ -1,5 +1,5 @@
 import japanmesh from '../japanmesh'
-import { LEVEL_80000_CODES } from '../constants/level_80000_codes'
+import { LEVEL_80000_CODES } from '../constants'
 
 test('japanmesh.toCode', () => {
   expect(japanmesh.toCode(35.70078, 139.71475, 80000)).toBe('5339')

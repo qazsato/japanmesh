@@ -1,5 +1,4 @@
-import { MESH } from './constants/mesh'
-import { LEVEL_80000_CODES } from './constants/level_80000_codes'
+import { MESH, LEVEL_80000_CODES } from './constants'
 
 function isValidCode(code: string) {
   // 桁数チェック
