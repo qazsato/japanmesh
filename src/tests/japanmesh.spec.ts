@@ -119,6 +119,8 @@ test('japanmesh.toGeoJSON', () => {
 test('japanmesh.getLevel', () => {
   expect(japanmesh.getLevel('5339')).toBe(80000)
   expect(japanmesh.getLevel('533945')).toBe(10000)
+  expect(japanmesh.getLevel('5339451')).toBe(5000)
+  expect(japanmesh.getLevel('533945115')).toBe(2000)
   expect(japanmesh.getLevel('53394547')).toBe(1000)
   expect(japanmesh.getLevel('533945471')).toBe(500)
   expect(japanmesh.getLevel('5339454711')).toBe(250)

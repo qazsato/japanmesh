@@ -66,27 +66,26 @@ function splitCodeByLevel(code: string) {
   return codes
 }
 
-function getLevel(code: string | null = null) {
-  if (code === null) {
-    return null
-  }
+function getLevel(code: string) {
   const digit = code.length
-  switch (digit) {
-    case MESH.LEVEL_80000.DIGIT:
-      return 80000
-    case MESH.LEVEL_10000.DIGIT:
-      return 10000
-    case MESH.LEVEL_1000.DIGIT:
-      return 1000
-    case MESH.LEVEL_500.DIGIT:
-      return 500
-    case MESH.LEVEL_250.DIGIT:
-      return 250
-    case MESH.LEVEL_125.DIGIT:
-      return 125
-    default:
-      return null
+  if (digit === MESH.LEVEL_80000.DIGIT) {
+    return 80000
+  } else if (digit === MESH.LEVEL_10000.DIGIT) {
+    return 10000
+  } else if (digit === MESH.LEVEL_5000.DIGIT) {
+    return 5000
+  } else if (digit === MESH.LEVEL_2000.DIGIT && code[code.length - 1] === '5') {
+    return 2000
+  } else if (digit === MESH.LEVEL_1000.DIGIT) {
+    return 1000
+  } else if (digit === MESH.LEVEL_500.DIGIT) {
+    return 500
+  } else if (digit === MESH.LEVEL_250.DIGIT) {
+    return 250
+  } else if (digit === MESH.LEVEL_125.DIGIT) {
+    return 125
   }
+  return null
 }
 
 function getCodeByLevel(code: string, level: number) {
