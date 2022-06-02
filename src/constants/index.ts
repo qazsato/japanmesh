@@ -1,4 +1,4 @@
-export const AVAILABLE_LEVELS = [80000, 10000, 1000, 500, 250, 125]
+export const AVAILABLE_LEVELS = [80000, 10000, 5000, 2000, 1000, 500, 250, 125]
 
 // 第１次地域区画の全メッシュコード
 // https://www.e-stat.go.jp/pdf/gis/primary_mesh_jouhou.pdf

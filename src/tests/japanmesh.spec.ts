@@ -1,15 +1,31 @@
 import japanmesh from '../japanmesh'
 import { LEVEL_80000_CODES } from '../constants'
 
-test('japanmesh.toCode', () => {
+test('japanmesh.toCode: レベル指定で適切なコードが返却されること', () => {
   expect(japanmesh.toCode(35.70078, 139.71475, 80000)).toBe('5339')
   expect(japanmesh.toCode(35.70078, 139.71475, 10000)).toBe('533945')
+  expect(japanmesh.toCode(35.70078, 139.71475, 5000)).toBe('5339452')
+  expect(japanmesh.toCode(35.70078, 139.71475, 2000)).toBe('533945465')
   expect(japanmesh.toCode(35.70078, 139.71475, 1000)).toBe('53394547')
   expect(japanmesh.toCode(35.70078, 139.71475, 500)).toBe('533945471')
   expect(japanmesh.toCode(35.70078, 139.71475, 250)).toBe('5339454711')
   expect(japanmesh.toCode(35.70078, 139.71475, 125)).toBe('53394547112')
+})
+
+test('japanmesh.toCode: レベル未指定で8分の1地域メッシュ(125m)のコードが返却されること', () => {
   expect(japanmesh.toCode(35.70078, 139.71475)).toBe('53394547112')
 })
+
+test('japanmesh.toCode: 無効なレベル指定で例外が発生すること', () => {
+  // NOTE: v1.0 以前のレベル定義は 1 ~ 6 であった
+  expect(() => japanmesh.toCode(35.70078, 139.71475, 1)).toThrow();
+  expect(() => japanmesh.toCode(35.70078, 139.71475, 2)).toThrow();
+  expect(() => japanmesh.toCode(35.70078, 139.71475, 3)).toThrow();
+  expect(() => japanmesh.toCode(35.70078, 139.71475, 4)).toThrow();
+  expect(() => japanmesh.toCode(35.70078, 139.71475, 5)).toThrow();
+  expect(() => japanmesh.toCode(35.70078, 139.71475, 6)).toThrow();
+})
+
 
 test('japanmesh.toGeoJSON', () => {
   const jsonLv80000 = {
@@ -119,8 +135,8 @@ test('japanmesh.toGeoJSON', () => {
 test('japanmesh.getLevel', () => {
   expect(japanmesh.getLevel('5339')).toBe(80000)
   expect(japanmesh.getLevel('533945')).toBe(10000)
-  expect(japanmesh.getLevel('5339451')).toBe(5000)
-  expect(japanmesh.getLevel('533945115')).toBe(2000)
+  expect(japanmesh.getLevel('5339452')).toBe(5000)
+  expect(japanmesh.getLevel('533945465')).toBe(2000)
   expect(japanmesh.getLevel('53394547')).toBe(1000)
   expect(japanmesh.getLevel('533945471')).toBe(500)
   expect(japanmesh.getLevel('5339454711')).toBe(250)

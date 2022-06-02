@@ -1,4 +1,4 @@
-import { MESH, LEVEL_80000_CODES } from './constants'
+import { AVAILABLE_LEVELS, MESH, LEVEL_80000_CODES } from './constants'
 
 function isValidCode(code: string) {
   // 桁数チェック
@@ -88,30 +88,19 @@ function getLevel(code: string) {
   return null
 }
 
-function getCodeByLevel(code: string, level: number) {
-  switch (level) {
-    case 80000:
-      return code.slice(0, MESH.LEVEL_80000.DIGIT)
-    case 10000:
-      return code.slice(0, MESH.LEVEL_10000.DIGIT)
-    case 1000:
-      return code.slice(0, MESH.LEVEL_1000.DIGIT)
-    case 500:
-      return code.slice(0, MESH.LEVEL_500.DIGIT)
-    case 250:
-      return code.slice(0, MESH.LEVEL_250.DIGIT)
-    case 125:
-      return code.slice(0, MESH.LEVEL_125.DIGIT)
-    default:
-      return code
-  }
-}
-
 /**
  * 緯度経度から地域メッシュコードを取得する。
  * 算出式 : https://www.stat.go.jp/data/mesh/pdf/gaiyo1.pdf
  */
-function toCode(lat: number, lng: number, level: number | null = null) {
+ function toCode(lat: number, lng: number, level: number = 125) {
+  if (AVAILABLE_LEVELS.includes(level) === false) {
+    throw new Error(`invalid level. available : ${AVAILABLE_LEVELS}`)
+  }
+
+  if (isIntegrationAreaMesh(level)) {
+    return toCodeForIntegrationAreaMesh(lat, lng, level)
+  }
+
   // （１）緯度よりｐ，ｑ，ｒ，ｓ，ｔを算出
   const p = Math.floor((lat * 60) / 40)
   const a = (lat * 60) % 40
@@ -153,9 +142,52 @@ function toCode(lat: number, lng: number, level: number | null = null) {
     throw new Error(`lat: ${lat} and lng: ${lng} are invalid location.`)
   }
 
-  if (level) {
-    code = getCodeByLevel(code, level)
+  switch (level) {
+    case 80000:
+      return code.slice(0, MESH.LEVEL_80000.DIGIT)
+    case 1000:
+      return code.slice(0, MESH.LEVEL_1000.DIGIT)
+    case 500:
+      return code.slice(0, MESH.LEVEL_500.DIGIT)
+    case 250:
+      return code.slice(0, MESH.LEVEL_250.DIGIT)
+    default:
+      return code
   }
+}
+
+/**
+ * 緯度経度から地域メッシュコードを取得する。統合地域メッシュ用。
+ * 算出式 : https://www.stat.go.jp/data/mesh/pdf/gaiyo1.pdf
+ * @param {number} lat
+ * @param {number} lng
+ * @param {number} level
+ */
+ function toCodeForIntegrationAreaMesh(lat: number, lng: number, level: number) {
+  // （１）緯度よりｐ，ｑを算出
+  const p = Math.floor((lat * 60) / 40)
+  const a = (lat * 60) % 40
+  const q = Math.floor(a / 5)
+  const b = a % 5
+
+  // （２）経度よりｕ，ｖを算出
+  const u = Math.floor(lng - 100)
+  const f = lng - 100 - u
+  const v = Math.floor((f * 60) / 7.5)
+  const g = (f * 60) % 7.5
+
+  let code = `${p}${u}${q}${v}`
+
+  if (level === 5000) {
+    const r = Math.floor((b * 60) / 150)
+    const w = Math.floor((g * 60) / 225)
+    code += r + (w + 1)
+  } else if (level === 2000) {
+    const r = Math.floor((b * 60) / 60) * 2
+    const w = Math.floor((g * 60) / 90) * 2
+    code += `${r}${w}5`
+  }
+
   return code
 }
 
@@ -288,6 +320,11 @@ function getCodes(code: string | null = null) {
     }
   }
   return codes
+}
+
+// 統合地域メッシュであるか否か
+function isIntegrationAreaMesh(level: number) {
+  return [10000, 5000, 2000].includes(level)
 }
 
 export default {
