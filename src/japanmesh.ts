@@ -1,69 +1,99 @@
 import { AVAILABLE_LEVELS, MESH, LEVEL_80000_CODES } from './constants'
 
 function isValidCode(code: string) {
-  // 桁数チェック
-  if (
-    code.length !== MESH.LEVEL_80000.DIGIT &&
-    code.length !== MESH.LEVEL_10000.DIGIT &&
-    code.length !== MESH.LEVEL_1000.DIGIT &&
-    code.length !== MESH.LEVEL_500.DIGIT &&
-    code.length !== MESH.LEVEL_250.DIGIT &&
-    code.length !== MESH.LEVEL_125.DIGIT
-  ) {
+  const level = getLevel(code)
+  if (level === null) {
     return false
   }
 
-  const codes = splitCodeByLevel(code)
-  const isInValid = codes.some((c: string) => {
-    const level = getLevel(c)
-    if (level === 80000) {
-      if (!LEVEL_80000_CODES.includes(c)) {
-        return true
+  // 第1次地域区画
+  if (!LEVEL_80000_CODES.includes(code.slice(0, 4))) {
+    return false
+  }
+
+  if (level <= 10000) {
+    // 第2次地域区画 (x, y は 0~7 の範囲となる)
+    const y10000 = Number(code[4])
+    const x10000 = Number(code[5])
+    if (
+      y10000 < MESH.LEVEL_10000.RANGE.MIN ||
+      y10000 > MESH.LEVEL_10000.RANGE.MAX ||
+      x10000 < MESH.LEVEL_10000.RANGE.MIN ||
+      x10000 > MESH.LEVEL_10000.RANGE.MAX
+    ) {
+      return false
+    }
+  }
+
+  if (isIntegrationAreaMesh(level)) {
+    if (level === 5000) {
+      // 5倍地域メッシュ (x, y は 1~4 の範囲となる)
+      const xy5000 = Number(code[6])
+      if (
+        xy5000 < MESH.LEVEL_5000.RANGE.MIN ||
+        xy5000 > MESH.LEVEL_5000.RANGE.MAX
+      ) {
+        return false
       }
-    } else if (level === 10000) {
-      const x = Number(c[c.length - 1])
-      const y = Number(c[c.length - 2])
-      if (x > MESH.LEVEL_10000.DIVISION.X || y > MESH.LEVEL_10000.DIVISION.Y) {
-        return true
-      }
-    } else if (level === 1000) {
-      const x = Number(c[c.length - 1])
-      const y = Number(c[c.length - 2])
-      if (x > MESH.LEVEL_1000.DIVISION.X || y > MESH.LEVEL_1000.DIVISION.Y) {
-        return true
-      }
-    } else if (level === 500 || level === 250 || level === 125) {
-      const DIVISION_NUM = 4
-      const xy = Number(c.slice(-1))
-      if (xy === 0 || xy > DIVISION_NUM) {
-        return true
+    } else if (level === 2000) {
+      // 2倍地域メッシュ (x, y は 0~8 の範囲の偶数となる)
+      const y2000 = Number(code[6])
+      const x2000 = Number(code[7])
+      const range = [0, 2, 4, 6, 8]
+      if (!range.includes(y2000) || !range.includes(x2000)) {
+        return false
       }
     }
-  })
-  return !isInValid
-}
+  } else {
+    if (level <= 1000) {
+      // 基準地域メッシュ(第3次地域区画) (x, y は 0~9 の範囲となる)
+      const y1000 = Number(code[6])
+      const x1000 = Number(code[7])
+      if (
+        y1000 < MESH.LEVEL_1000.RANGE.MIN ||
+        y1000 > MESH.LEVEL_1000.RANGE.MAX ||
+        x1000 < MESH.LEVEL_1000.RANGE.MIN ||
+        x1000 > MESH.LEVEL_1000.RANGE.MAX
+      ) {
+        return false
+      }
+    }
 
-function splitCodeByLevel(code: string) {
-  const codes = []
-  if (code.length >= MESH.LEVEL_80000.DIGIT) {
-    codes.push(code.slice(0, MESH.LEVEL_80000.DIGIT))
+    if (level <= 500) {
+      // 2分の1地域メッシュ (x, y は 1~4 の範囲となる)
+      const xy500 = Number(code[8])
+      if (
+        xy500 < MESH.LEVEL_500.RANGE.MIN ||
+        xy500 > MESH.LEVEL_500.RANGE.MAX
+      ) {
+        return false
+      }
+    }
+
+    if (level <= 250) {
+      // 4分の1地域メッシュ (x, y は 1~4 の範囲となる)
+      const xy250 = Number(code[9])
+      if (
+        xy250 < MESH.LEVEL_250.RANGE.MIN ||
+        xy250 > MESH.LEVEL_250.RANGE.MAX
+      ) {
+        return false
+      }
+    }
+
+    if (level <= 125) {
+      // 8分の1地域メッシュ (x, y は 1~4 の範囲となる)
+      const xy125 = Number(code[10])
+      if (
+        xy125 < MESH.LEVEL_125.RANGE.MIN ||
+        xy125 > MESH.LEVEL_125.RANGE.MAX
+      ) {
+        return false
+      }
+    }
   }
-  if (code.length >= MESH.LEVEL_10000.DIGIT) {
-    codes.push(code.slice(0, MESH.LEVEL_10000.DIGIT))
-  }
-  if (code.length >= MESH.LEVEL_1000.DIGIT) {
-    codes.push(code.slice(0, MESH.LEVEL_1000.DIGIT))
-  }
-  if (code.length >= MESH.LEVEL_500.DIGIT) {
-    codes.push(code.slice(0, MESH.LEVEL_500.DIGIT))
-  }
-  if (code.length >= MESH.LEVEL_250.DIGIT) {
-    codes.push(code.slice(0, MESH.LEVEL_250.DIGIT))
-  }
-  if (code.length >= MESH.LEVEL_125.DIGIT) {
-    codes.push(code.slice(0, MESH.LEVEL_125.DIGIT))
-  }
-  return codes
+
+  return true
 }
 
 function getLevel(code: string) {
@@ -92,9 +122,9 @@ function getLevel(code: string) {
  * 緯度経度から地域メッシュコードを取得する。
  * 算出式 : https://www.stat.go.jp/data/mesh/pdf/gaiyo1.pdf
  */
- function toCode(lat: number, lng: number, level: number = 125) {
+function toCode(lat: number, lng: number, level = 125) {
   if (AVAILABLE_LEVELS.includes(level) === false) {
-    throw new Error(`invalid level. available : ${AVAILABLE_LEVELS}`)
+    throw new Error(`invalid level. available : ${AVAILABLE_LEVELS.join(', ')}`)
   }
 
   if (isIntegrationAreaMesh(level)) {
@@ -136,7 +166,7 @@ function getLevel(code: string) {
   const oo = uu * 2 + (zz + 1)
 
   // （４）ｐ，ｑ，ｒ，ｕ，ｖ，ｗ，ｍ、ｎ、ooより地域メッシュ・コードを算出
-  let code = `${p}${u}${q}${v}${r}${w}${m}${n}${oo}`
+  const code = `${p}${u}${q}${v}${r}${w}${m}${n}${oo}`
 
   if (isValidCode(code) === false) {
     throw new Error(`lat: ${lat} and lng: ${lng} are invalid location.`)
@@ -163,7 +193,7 @@ function getLevel(code: string) {
  * @param {number} lng
  * @param {number} level
  */
- function toCodeForIntegrationAreaMesh(lat: number, lng: number, level: number) {
+function toCodeForIntegrationAreaMesh(lat: number, lng: number, level: number) {
   // （１）緯度よりｐ，ｑを算出
   const p = Math.floor((lat * 60) / 40)
   const a = (lat * 60) % 40

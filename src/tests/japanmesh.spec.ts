@@ -18,14 +18,13 @@ test('japanmesh.toCode: レベル未指定で8分の1地域メッシュ(125m)の
 
 test('japanmesh.toCode: 無効なレベル指定で例外が発生すること', () => {
   // NOTE: v1.0 以前のレベル定義は 1 ~ 6 であった
-  expect(() => japanmesh.toCode(35.70078, 139.71475, 1)).toThrow();
-  expect(() => japanmesh.toCode(35.70078, 139.71475, 2)).toThrow();
-  expect(() => japanmesh.toCode(35.70078, 139.71475, 3)).toThrow();
-  expect(() => japanmesh.toCode(35.70078, 139.71475, 4)).toThrow();
-  expect(() => japanmesh.toCode(35.70078, 139.71475, 5)).toThrow();
-  expect(() => japanmesh.toCode(35.70078, 139.71475, 6)).toThrow();
+  expect(() => japanmesh.toCode(35.70078, 139.71475, 1)).toThrow()
+  expect(() => japanmesh.toCode(35.70078, 139.71475, 2)).toThrow()
+  expect(() => japanmesh.toCode(35.70078, 139.71475, 3)).toThrow()
+  expect(() => japanmesh.toCode(35.70078, 139.71475, 4)).toThrow()
+  expect(() => japanmesh.toCode(35.70078, 139.71475, 5)).toThrow()
+  expect(() => japanmesh.toCode(35.70078, 139.71475, 6)).toThrow()
 })
-
 
 test('japanmesh.toGeoJSON', () => {
   const jsonLv80000 = {

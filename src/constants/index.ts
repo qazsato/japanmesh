@@ -182,7 +182,7 @@ export const LEVEL_80000_CODES = [
 ]
 
 export const MESH = {
-  // 第１次地域区画
+  // 第1次地域区画
   LEVEL_80000: {
     DIGIT: 4, // コード桁数
     DIVISION: {
@@ -215,9 +215,13 @@ export const MESH = {
       },
     },
   },
-  // 第２次地域区画
+  // 第2次地域区画
   LEVEL_10000: {
     DIGIT: 6,
+    RANGE: {
+      MIN: 0,
+      MAX: 7,
+    },
     DIVISION: {
       X: 8,
       Y: 8,
@@ -231,14 +235,36 @@ export const MESH = {
   // 5倍地域メッシュ
   LEVEL_5000: {
     DIGIT: 7,
+    RANGE: {
+      MIN: 1,
+      MAX: 4,
+    },
+    DISTANCE: {
+      // 緯度経度の間隔(単位:度) (緯度: 150秒, 経度: 225秒)
+      LAT: 150 / 60 / 60,
+      LNG: 225 / 60 / 60,
+    },
   },
   // 2倍地域メッシュ
   LEVEL_2000: {
     DIGIT: 9,
+    RANGE: {
+      MIN: 0,
+      MAX: 8,
+    },
+    DISTANCE: {
+      // 緯度経度の間隔(単位:度) (緯度: 60秒, 経度: 90秒)
+      LAT: 60 / 60 / 60,
+      LNG: 90 / 60 / 60,
+    },
   },
-  // 基準地域メッシュ(第３次地域区画)
+  // 基準地域メッシュ(第3次地域区画)
   LEVEL_1000: {
     DIGIT: 8,
+    RANGE: {
+      MIN: 0,
+      MAX: 9,
+    },
     DIVISION: {
       X: 10,
       Y: 10,
@@ -249,9 +275,13 @@ export const MESH = {
       LNG: 45 / 60 / 60,
     },
   },
-  // ２分の１地域メッシュ
+  // 2分の1地域メッシュ
   LEVEL_500: {
     DIGIT: 9,
+    RANGE: {
+      MIN: 1,
+      MAX: 4,
+    },
     DIVISION: {
       X: 2,
       Y: 2,
@@ -262,9 +292,13 @@ export const MESH = {
       LNG: 22.5 / 60 / 60,
     },
   },
-  // ４分の１地域メッシュ
+  // 4分の1地域メッシュ
   LEVEL_250: {
     DIGIT: 10,
+    RANGE: {
+      MIN: 1,
+      MAX: 4,
+    },
     DIVISION: {
       X: 2,
       Y: 2,
@@ -275,9 +309,13 @@ export const MESH = {
       LNG: 11.25 / 60 / 60,
     },
   },
-  // ８分の１地域メッシュ
+  // 8分の1地域メッシュ
   LEVEL_125: {
     DIGIT: 11,
+    RANGE: {
+      MIN: 1,
+      MAX: 4,
+    },
     DIVISION: {
       X: 2,
       Y: 2,
