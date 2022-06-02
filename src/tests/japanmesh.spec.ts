@@ -1,7 +1,7 @@
 import japanmesh from '../japanmesh'
 import { LEVEL_80000_CODES } from '../constants'
 
-test('japanmesh.toCode: レベル指定で適切なコードが返却されること', () => {
+test('japanmesh.toCode: レベル指定で適切なコードが取得できること', () => {
   expect(japanmesh.toCode(35.70078, 139.71475, 80000)).toBe('5339')
   expect(japanmesh.toCode(35.70078, 139.71475, 10000)).toBe('533945')
   expect(japanmesh.toCode(35.70078, 139.71475, 5000)).toBe('5339452')
@@ -12,7 +12,7 @@ test('japanmesh.toCode: レベル指定で適切なコードが返却される�
   expect(japanmesh.toCode(35.70078, 139.71475, 125)).toBe('53394547112')
 })
 
-test('japanmesh.toCode: レベル未指定で8分の1地域メッシュ(125m)のコードが返却されること', () => {
+test('japanmesh.toCode: レベル未指定で8分の1地域メッシュ(125m)のコードが取得できること', () => {
   expect(japanmesh.toCode(35.70078, 139.71475)).toBe('53394547112')
 })
 
@@ -131,7 +131,7 @@ test('japanmesh.toGeoJSON', () => {
   expect(japanmesh.toGeoJSON('53394547112')).toEqual(jsonLv125)
 })
 
-test('japanmesh.getLevel', () => {
+test('japanmesh.getLevel: 存在するコード指定でレベルが取得できること', () => {
   expect(japanmesh.getLevel('5339')).toBe(80000)
   expect(japanmesh.getLevel('533945')).toBe(10000)
   expect(japanmesh.getLevel('5339452')).toBe(5000)
@@ -140,7 +140,19 @@ test('japanmesh.getLevel', () => {
   expect(japanmesh.getLevel('533945471')).toBe(500)
   expect(japanmesh.getLevel('5339454711')).toBe(250)
   expect(japanmesh.getLevel('53394547112')).toBe(125)
-  expect(japanmesh.getLevel('1')).toBe(null)
+})
+
+test('japanmesh.getLevel: 無効なコード指定で例外が発生すること', () => {
+  expect(() => japanmesh.getLevel('9')).toThrow()
+  expect(() => japanmesh.getLevel('99')).toThrow()
+  expect(() => japanmesh.getLevel('999')).toThrow()
+  expect(() => japanmesh.getLevel('9999')).toThrow()
+  expect(() => japanmesh.getLevel('999999')).toThrow()
+  expect(() => japanmesh.getLevel('9999999')).toThrow()
+  expect(() => japanmesh.getLevel('99999999')).toThrow()
+  expect(() => japanmesh.getLevel('999999999')).toThrow()
+  expect(() => japanmesh.getLevel('9999999999')).toThrow()
+  expect(() => japanmesh.getLevel('99999999999')).toThrow()
 })
 
 test('japanmesh.getCodes', () => {

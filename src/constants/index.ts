@@ -1,4 +1,6 @@
-export const AVAILABLE_LEVELS = [80000, 10000, 5000, 2000, 1000, 500, 250, 125]
+export const AREA_MESH_LEVELS = [80000, 10000, 5000, 2000, 1000, 500, 250, 125]
+
+export const INTEGRATION_AREA_MESH_LEVELS = [10000, 5000, 2000]
 
 // 第１次地域区画の全メッシュコード
 // https://www.e-stat.go.jp/pdf/gis/primary_mesh_jouhou.pdf

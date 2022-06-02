@@ -1,8 +1,22 @@
-import { AVAILABLE_LEVELS, MESH, LEVEL_80000_CODES } from './constants'
+import {
+  AREA_MESH_LEVELS,
+  INTEGRATION_AREA_MESH_LEVELS,
+  MESH,
+  LEVEL_80000_CODES,
+} from './constants'
 
 function isValidCode(code: string) {
-  const level = getLevel(code)
-  if (level === null) {
+  // 桁数チェック
+  if (
+    code.length !== MESH.LEVEL_80000.DIGIT &&
+    code.length !== MESH.LEVEL_10000.DIGIT &&
+    code.length !== MESH.LEVEL_5000.DIGIT &&
+    code.length !== MESH.LEVEL_2000.DIGIT &&
+    code.length !== MESH.LEVEL_1000.DIGIT &&
+    code.length !== MESH.LEVEL_500.DIGIT &&
+    code.length !== MESH.LEVEL_250.DIGIT &&
+    code.length !== MESH.LEVEL_125.DIGIT
+  ) {
     return false
   }
 
@@ -11,7 +25,7 @@ function isValidCode(code: string) {
     return false
   }
 
-  if (level <= 10000) {
+  if (code.length >= MESH.LEVEL_10000.DIGIT) {
     // 第2次地域区画 (x, y は 0~7 の範囲となる)
     const y10000 = Number(code[4])
     const x10000 = Number(code[5])
@@ -25,8 +39,8 @@ function isValidCode(code: string) {
     }
   }
 
-  if (isIntegrationAreaMesh(level)) {
-    if (level === 5000) {
+  if (isIntegrationAreaMesh(code)) {
+    if (code.length === MESH.LEVEL_5000.DIGIT) {
       // 5倍地域メッシュ (x, y は 1~4 の範囲となる)
       const xy5000 = Number(code[6])
       if (
@@ -35,7 +49,7 @@ function isValidCode(code: string) {
       ) {
         return false
       }
-    } else if (level === 2000) {
+    } else if (code.length === MESH.LEVEL_2000.DIGIT) {
       // 2倍地域メッシュ (x, y は 0~8 の範囲の偶数となる)
       const y2000 = Number(code[6])
       const x2000 = Number(code[7])
@@ -45,7 +59,7 @@ function isValidCode(code: string) {
       }
     }
   } else {
-    if (level <= 1000) {
+    if (code.length >= MESH.LEVEL_1000.DIGIT) {
       // 基準地域メッシュ(第3次地域区画) (x, y は 0~9 の範囲となる)
       const y1000 = Number(code[6])
       const x1000 = Number(code[7])
@@ -59,7 +73,7 @@ function isValidCode(code: string) {
       }
     }
 
-    if (level <= 500) {
+    if (code.length >= MESH.LEVEL_500.DIGIT) {
       // 2分の1地域メッシュ (x, y は 1~4 の範囲となる)
       const xy500 = Number(code[8])
       if (
@@ -70,7 +84,7 @@ function isValidCode(code: string) {
       }
     }
 
-    if (level <= 250) {
+    if (code.length >= MESH.LEVEL_250.DIGIT) {
       // 4分の1地域メッシュ (x, y は 1~4 の範囲となる)
       const xy250 = Number(code[9])
       if (
@@ -81,7 +95,7 @@ function isValidCode(code: string) {
       }
     }
 
-    if (level <= 125) {
+    if (code.length >= MESH.LEVEL_125.DIGIT) {
       // 8分の1地域メッシュ (x, y は 1~4 の範囲となる)
       const xy125 = Number(code[10])
       if (
@@ -97,6 +111,9 @@ function isValidCode(code: string) {
 }
 
 function getLevel(code: string) {
+  if (isValidCode(code) === false) {
+    throw new Error(`'${code}' is invalid mesh code.`)
+  }
   const digit = code.length
   if (digit === MESH.LEVEL_80000.DIGIT) {
     return 80000
@@ -123,11 +140,11 @@ function getLevel(code: string) {
  * 算出式 : https://www.stat.go.jp/data/mesh/pdf/gaiyo1.pdf
  */
 function toCode(lat: number, lng: number, level = 125) {
-  if (AVAILABLE_LEVELS.includes(level) === false) {
-    throw new Error(`invalid level. available : ${AVAILABLE_LEVELS.join(', ')}`)
+  if (AREA_MESH_LEVELS.includes(level) === false) {
+    throw new Error(`invalid level. available : ${AREA_MESH_LEVELS.join(', ')}`)
   }
 
-  if (isIntegrationAreaMesh(level)) {
+  if (INTEGRATION_AREA_MESH_LEVELS.includes(level)) {
     return toCodeForIntegrationAreaMesh(lat, lng, level)
   }
 
@@ -352,9 +369,15 @@ function getCodes(code: string | null = null) {
   return codes
 }
 
-// 統合地域メッシュであるか否か
-function isIntegrationAreaMesh(level: number) {
-  return [10000, 5000, 2000].includes(level)
+function isIntegrationAreaMesh(code: string) {
+  if (
+    code.length === MESH.LEVEL_10000.DIGIT ||
+    code.length === MESH.LEVEL_5000.DIGIT ||
+    (code.length === MESH.LEVEL_2000.DIGIT && code[code.length - 1] === '5')
+  ) {
+    return true
+  }
+  return false
 }
 
 export default {
