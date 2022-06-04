@@ -59,6 +59,38 @@ test('japanmesh.toGeoJSON', () => {
       ],
     },
   }
+  const jsonLv5000 = {
+    type: 'Feature',
+    properties: {},
+    geometry: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [139.75, 35.70833333333333],
+          [139.6875, 35.70833333333333],
+          [139.6875, 35.666666666666664],
+          [139.75, 35.666666666666664],
+          [139.75, 35.70833333333333],
+        ],
+      ],
+    },
+  }
+  const jsonLv2000 = {
+    type: 'Feature',
+    properties: {},
+    geometry: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [139.725, 35.71666666666666],
+          [139.7, 35.71666666666666],
+          [139.7, 35.699999999999996],
+          [139.725, 35.699999999999996],
+          [139.725, 35.71666666666666],
+        ],
+      ],
+    },
+  }
   const jsonLv1000 = {
     type: 'Feature',
     properties: {},
@@ -125,10 +157,25 @@ test('japanmesh.toGeoJSON', () => {
   }
   expect(japanmesh.toGeoJSON('5438')).toEqual(jsonLv80000)
   expect(japanmesh.toGeoJSON('533945')).toEqual(jsonLv10000)
+  expect(japanmesh.toGeoJSON('5339452')).toEqual(jsonLv5000)
+  expect(japanmesh.toGeoJSON('533945465')).toEqual(jsonLv2000)
   expect(japanmesh.toGeoJSON('53394547')).toEqual(jsonLv1000)
   expect(japanmesh.toGeoJSON('533945471')).toEqual(jsonLv500)
   expect(japanmesh.toGeoJSON('5339454711')).toEqual(jsonLv250)
   expect(japanmesh.toGeoJSON('53394547112')).toEqual(jsonLv125)
+})
+
+test('japanmesh.toGeoJSON: 無効なコード指定で例外が発生すること', () => {
+  expect(() => japanmesh.toGeoJSON('9')).toThrow()
+  expect(() => japanmesh.toGeoJSON('99')).toThrow()
+  expect(() => japanmesh.toGeoJSON('999')).toThrow()
+  expect(() => japanmesh.toGeoJSON('9999')).toThrow()
+  expect(() => japanmesh.toGeoJSON('999999')).toThrow()
+  expect(() => japanmesh.toGeoJSON('9999999')).toThrow()
+  expect(() => japanmesh.toGeoJSON('99999999')).toThrow()
+  expect(() => japanmesh.toGeoJSON('999999999')).toThrow()
+  expect(() => japanmesh.toGeoJSON('9999999999')).toThrow()
+  expect(() => japanmesh.toGeoJSON('99999999999')).toThrow()
 })
 
 test('japanmesh.getLevel: 存在するコード指定でレベルが取得できること', () => {

@@ -264,51 +264,70 @@ function toGeoJSON(code: string, properties: object = {}) {
   }
 
   if (code.length >= MESH.LEVEL_10000.DIGIT) {
-    const lv10000X = Number(code.slice(5, 6))
-    const lv10000Y = Number(code.slice(4, 5))
+    const lv10000X = Number(code[5])
+    const lv10000Y = Number(code[4])
     minX += lv10000X * MESH.LEVEL_10000.DISTANCE.LNG
     maxX = minX + MESH.LEVEL_10000.DISTANCE.LNG
     minY += lv10000Y * MESH.LEVEL_10000.DISTANCE.LAT
     maxY = minY + MESH.LEVEL_10000.DISTANCE.LAT
   }
 
-  if (code.length >= MESH.LEVEL_1000.DIGIT) {
-    const lv1000X = Number(code.slice(7, 8))
-    const lv1000Y = Number(code.slice(6, 7))
-    minX += lv1000X * MESH.LEVEL_1000.DISTANCE.LNG
-    maxX = minX + MESH.LEVEL_1000.DISTANCE.LNG
-    minY += lv1000Y * MESH.LEVEL_1000.DISTANCE.LAT
-    maxY = minY + MESH.LEVEL_1000.DISTANCE.LAT
-  }
+  if (isIntegrationAreaMesh(code)) {
+    if (code.length === MESH.LEVEL_5000.DIGIT) {
+      const lv5000XY = Number(code[6])
+      const lv5000X = lv5000XY === 1 || lv5000XY === 3 ? 0 : 1
+      const lv5000Y = lv5000XY === 1 || lv5000XY === 2 ? 0 : 1
+      minX += lv5000X * MESH.LEVEL_5000.DISTANCE.LNG
+      maxX = minX + MESH.LEVEL_5000.DISTANCE.LNG
+      minY += lv5000Y * MESH.LEVEL_5000.DISTANCE.LAT
+      maxY = minY + MESH.LEVEL_5000.DISTANCE.LAT
+    } else if (code.length === MESH.LEVEL_2000.DIGIT) {
+      const lv2000X = Number(code[7])
+      const lv2000Y = Number(code[6])
+      minX += (lv2000X / 2) * MESH.LEVEL_2000.DISTANCE.LNG
+      maxX = minX + MESH.LEVEL_2000.DISTANCE.LNG
+      minY += (lv2000Y / 2) * MESH.LEVEL_2000.DISTANCE.LAT
+      maxY = minY + MESH.LEVEL_2000.DISTANCE.LAT
+    }
+  } else {
+    if (code.length >= MESH.LEVEL_1000.DIGIT) {
+      const lv1000X = Number(code[7])
+      const lv1000Y = Number(code[6])
+      minX += lv1000X * MESH.LEVEL_1000.DISTANCE.LNG
+      maxX = minX + MESH.LEVEL_1000.DISTANCE.LNG
+      minY += lv1000Y * MESH.LEVEL_1000.DISTANCE.LAT
+      maxY = minY + MESH.LEVEL_1000.DISTANCE.LAT
+    }
 
-  if (code.length >= MESH.LEVEL_500.DIGIT) {
-    const lv500Num = code.slice(8, 9)
-    const lv500X = lv500Num === '1' || lv500Num === '3' ? 0 : 1
-    const lv500Y = lv500Num === '1' || lv500Num === '2' ? 0 : 1
-    minX += lv500X * MESH.LEVEL_500.DISTANCE.LNG
-    maxX = minX + MESH.LEVEL_500.DISTANCE.LNG
-    minY += lv500Y * MESH.LEVEL_500.DISTANCE.LAT
-    maxY = minY + MESH.LEVEL_500.DISTANCE.LAT
-  }
+    if (code.length >= MESH.LEVEL_500.DIGIT) {
+      const lv500XY = Number(code[8])
+      const lv500X = lv500XY === 1 || lv500XY === 3 ? 0 : 1
+      const lv500Y = lv500XY === 1 || lv500XY === 2 ? 0 : 1
+      minX += lv500X * MESH.LEVEL_500.DISTANCE.LNG
+      maxX = minX + MESH.LEVEL_500.DISTANCE.LNG
+      minY += lv500Y * MESH.LEVEL_500.DISTANCE.LAT
+      maxY = minY + MESH.LEVEL_500.DISTANCE.LAT
+    }
 
-  if (code.length >= MESH.LEVEL_250.DIGIT) {
-    const lv250Num = code.slice(9, 10)
-    const lv250X = lv250Num === '1' || lv250Num === '3' ? 0 : 1
-    const lv250Y = lv250Num === '1' || lv250Num === '2' ? 0 : 1
-    minX += lv250X * MESH.LEVEL_250.DISTANCE.LNG
-    maxX = minX + MESH.LEVEL_250.DISTANCE.LNG
-    minY += lv250Y * MESH.LEVEL_250.DISTANCE.LAT
-    maxY = minY + MESH.LEVEL_250.DISTANCE.LAT
-  }
+    if (code.length >= MESH.LEVEL_250.DIGIT) {
+      const lv250XY = Number(code[9])
+      const lv250X = lv250XY === 1 || lv250XY === 3 ? 0 : 1
+      const lv250Y = lv250XY === 1 || lv250XY === 2 ? 0 : 1
+      minX += lv250X * MESH.LEVEL_250.DISTANCE.LNG
+      maxX = minX + MESH.LEVEL_250.DISTANCE.LNG
+      minY += lv250Y * MESH.LEVEL_250.DISTANCE.LAT
+      maxY = minY + MESH.LEVEL_250.DISTANCE.LAT
+    }
 
-  if (code.length >= MESH.LEVEL_125.DIGIT) {
-    const lv125Num = code.slice(10, 11)
-    const lv125X = lv125Num === '1' || lv125Num === '3' ? 0 : 1
-    const lv125Y = lv125Num === '1' || lv125Num === '2' ? 0 : 1
-    minX += lv125X * MESH.LEVEL_125.DISTANCE.LNG
-    maxX = minX + MESH.LEVEL_125.DISTANCE.LNG
-    minY += lv125Y * MESH.LEVEL_125.DISTANCE.LAT
-    maxY = minY + MESH.LEVEL_125.DISTANCE.LAT
+    if (code.length >= MESH.LEVEL_125.DIGIT) {
+      const lv125XY = Number(code[10])
+      const lv125X = lv125XY === 1 || lv125XY === 3 ? 0 : 1
+      const lv125Y = lv125XY === 1 || lv125XY === 2 ? 0 : 1
+      minX += lv125X * MESH.LEVEL_125.DISTANCE.LNG
+      maxX = minX + MESH.LEVEL_125.DISTANCE.LNG
+      minY += lv125Y * MESH.LEVEL_125.DISTANCE.LAT
+      maxY = minY + MESH.LEVEL_125.DISTANCE.LAT
+    }
   }
   return createGeoJSON(minX, maxX, minY, maxY, properties)
 }
