@@ -27,13 +27,13 @@ function isValidCode(code: string) {
 
   if (code.length >= MESH.LEVEL_10000.DIGIT) {
     // 第2次地域区画 (x, y は 0~7 の範囲となる)
-    const y10000 = Number(code[4])
-    const x10000 = Number(code[5])
+    const lv10000Y = Number(code[4])
+    const lv10000X = Number(code[5])
     if (
-      y10000 < MESH.LEVEL_10000.RANGE.MIN ||
-      y10000 > MESH.LEVEL_10000.RANGE.MAX ||
-      x10000 < MESH.LEVEL_10000.RANGE.MIN ||
-      x10000 > MESH.LEVEL_10000.RANGE.MAX
+      lv10000Y < MESH.LEVEL_10000.RANGE.MIN ||
+      lv10000Y > MESH.LEVEL_10000.RANGE.MAX ||
+      lv10000X < MESH.LEVEL_10000.RANGE.MIN ||
+      lv10000X > MESH.LEVEL_10000.RANGE.MAX
     ) {
       return false
     }
@@ -42,32 +42,32 @@ function isValidCode(code: string) {
   if (isIntegrationAreaMesh(code)) {
     if (code.length === MESH.LEVEL_5000.DIGIT) {
       // 5倍地域メッシュ (x, y は 1~4 の範囲となる)
-      const xy5000 = Number(code[6])
+      const lv5000XY = Number(code[6])
       if (
-        xy5000 < MESH.LEVEL_5000.RANGE.MIN ||
-        xy5000 > MESH.LEVEL_5000.RANGE.MAX
+        lv5000XY < MESH.LEVEL_5000.RANGE.MIN ||
+        lv5000XY > MESH.LEVEL_5000.RANGE.MAX
       ) {
         return false
       }
     } else if (code.length === MESH.LEVEL_2000.DIGIT) {
       // 2倍地域メッシュ (x, y は 0~8 の範囲の偶数となる)
-      const y2000 = Number(code[6])
-      const x2000 = Number(code[7])
+      const lv2000Y = Number(code[6])
+      const lv2000X = Number(code[7])
       const range = [0, 2, 4, 6, 8]
-      if (!range.includes(y2000) || !range.includes(x2000)) {
+      if (!range.includes(lv2000Y) || !range.includes(lv2000X)) {
         return false
       }
     }
   } else {
     if (code.length >= MESH.LEVEL_1000.DIGIT) {
       // 基準地域メッシュ(第3次地域区画) (x, y は 0~9 の範囲となる)
-      const y1000 = Number(code[6])
-      const x1000 = Number(code[7])
+      const lv1000Y = Number(code[6])
+      const lv1000X = Number(code[7])
       if (
-        y1000 < MESH.LEVEL_1000.RANGE.MIN ||
-        y1000 > MESH.LEVEL_1000.RANGE.MAX ||
-        x1000 < MESH.LEVEL_1000.RANGE.MIN ||
-        x1000 > MESH.LEVEL_1000.RANGE.MAX
+        lv1000Y < MESH.LEVEL_1000.RANGE.MIN ||
+        lv1000Y > MESH.LEVEL_1000.RANGE.MAX ||
+        lv1000X < MESH.LEVEL_1000.RANGE.MIN ||
+        lv1000X > MESH.LEVEL_1000.RANGE.MAX
       ) {
         return false
       }
@@ -75,10 +75,10 @@ function isValidCode(code: string) {
 
     if (code.length >= MESH.LEVEL_500.DIGIT) {
       // 2分の1地域メッシュ (x, y は 1~4 の範囲となる)
-      const xy500 = Number(code[8])
+      const lv500XY = Number(code[8])
       if (
-        xy500 < MESH.LEVEL_500.RANGE.MIN ||
-        xy500 > MESH.LEVEL_500.RANGE.MAX
+        lv500XY < MESH.LEVEL_500.RANGE.MIN ||
+        lv500XY > MESH.LEVEL_500.RANGE.MAX
       ) {
         return false
       }
@@ -86,10 +86,10 @@ function isValidCode(code: string) {
 
     if (code.length >= MESH.LEVEL_250.DIGIT) {
       // 4分の1地域メッシュ (x, y は 1~4 の範囲となる)
-      const xy250 = Number(code[9])
+      const lv250XY = Number(code[9])
       if (
-        xy250 < MESH.LEVEL_250.RANGE.MIN ||
-        xy250 > MESH.LEVEL_250.RANGE.MAX
+        lv250XY < MESH.LEVEL_250.RANGE.MIN ||
+        lv250XY > MESH.LEVEL_250.RANGE.MAX
       ) {
         return false
       }
@@ -97,10 +97,10 @@ function isValidCode(code: string) {
 
     if (code.length >= MESH.LEVEL_125.DIGIT) {
       // 8分の1地域メッシュ (x, y は 1~4 の範囲となる)
-      const xy125 = Number(code[10])
+      const lv125XY = Number(code[10])
       if (
-        xy125 < MESH.LEVEL_125.RANGE.MIN ||
-        xy125 > MESH.LEVEL_125.RANGE.MAX
+        lv125XY < MESH.LEVEL_125.RANGE.MIN ||
+        lv125XY > MESH.LEVEL_125.RANGE.MAX
       ) {
         return false
       }
@@ -415,10 +415,27 @@ function getCodes(code: string | null = null, level: number | null = null) {
     } else if (level === MESH.LEVEL_2000.LEVEL) {
       const lv2000Codes: string[] = []
       lv10000Codes.forEach((lv10000Code) => {
-        const range = [0, 2, 4, 6, 8]
-        range.forEach((y) => {
-          range.forEach((x) => {
-            lv2000Codes.push(`${lv10000Code}${y}${x}`)
+        let yRange = [0, 2, 4, 6, 8]
+        let xRange = [0, 2, 4, 6, 8]
+        if (currentLevel === MESH.LEVEL_5000.LEVEL) {
+          const lv5000XY = Number(code[6])
+          if (lv5000XY === 1) {
+            yRange = [0, 2, 4]
+            xRange = [0, 2, 4]
+          } else if (lv5000XY === 2) {
+            yRange = [0, 2, 4]
+            xRange = [4, 6, 8]
+          } else if (lv5000XY === 3) {
+            yRange = [4, 6, 8]
+            xRange = [0, 2, 4]
+          } else if (lv5000XY === 4) {
+            yRange = [4, 6, 8]
+            xRange = [4, 6, 8]
+          }
+        }
+        yRange.forEach((y) => {
+          xRange.forEach((x) => {
+            lv2000Codes.push(`${lv10000Code}${y}${x}5`)
           })
         })
       })
@@ -427,17 +444,36 @@ function getCodes(code: string | null = null, level: number | null = null) {
   } else {
     const lv1000Codes: string[] = []
     if (currentLevel > MESH.LEVEL_1000.LEVEL) {
+      let yMin = MESH.LEVEL_1000.RANGE.MIN
+      let yMax = MESH.LEVEL_1000.RANGE.MAX
+      let xMin = MESH.LEVEL_1000.RANGE.MIN
+      let xMax = MESH.LEVEL_1000.RANGE.MAX
+      if (currentLevel === MESH.LEVEL_5000.LEVEL) {
+        const lv5000XY = Number(code[6])
+        if (lv5000XY === 1) {
+          yMax = (MESH.LEVEL_1000.RANGE.MAX + 1) / 2
+          xMax = (MESH.LEVEL_1000.RANGE.MAX + 1) / 2
+        } else if (lv5000XY === 2) {
+          yMax = (MESH.LEVEL_1000.RANGE.MAX + 1) / 2
+          xMin = (MESH.LEVEL_1000.RANGE.MAX + 1) / 2
+        } else if (lv5000XY === 3) {
+          yMin = (MESH.LEVEL_1000.RANGE.MAX + 1) / 2
+          xMax = (MESH.LEVEL_1000.RANGE.MAX + 1) / 2
+        } else if (lv5000XY === 4) {
+          yMin = (MESH.LEVEL_1000.RANGE.MAX + 1) / 2
+          xMin = (MESH.LEVEL_1000.RANGE.MAX + 1) / 2
+        }
+      } else if (currentLevel === MESH.LEVEL_2000.LEVEL) {
+        const lv2000X = Number(code[7])
+        const lv2000Y = Number(code[6])
+        yMin = lv2000Y
+        yMax = lv2000Y + 1
+        xMin = lv2000X
+        xMax = lv2000X + 1
+      }
       lv10000Codes.forEach((lv10000Code) => {
-        for (
-          let y = MESH.LEVEL_1000.RANGE.MIN;
-          y <= MESH.LEVEL_1000.RANGE.MAX;
-          y++
-        ) {
-          for (
-            let x = MESH.LEVEL_1000.RANGE.MIN;
-            x <= MESH.LEVEL_1000.RANGE.MAX;
-            x++
-          ) {
+        for (let y = yMin; y <= yMax; y++) {
+          for (let x = xMin; x <= xMax; x++) {
             lv1000Codes.push(`${lv10000Code}${y}${x}`)
           }
         }
