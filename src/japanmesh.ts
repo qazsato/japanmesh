@@ -129,10 +129,9 @@ function getLevel(code: string) {
     return 500
   } else if (digit === MESH.LEVEL_250.DIGIT) {
     return 250
-  } else if (digit === MESH.LEVEL_125.DIGIT) {
+  } else {
     return 125
   }
-  return null
 }
 
 /**
@@ -239,6 +238,11 @@ function toCodeForIntegrationAreaMesh(lat: number, lng: number, level: number) {
 }
 
 function toGeoJSON(code: string, properties: object = {}) {
+  const coordinate = toCoordinate(code)
+  return createGeoJSON(coordinate, properties)
+}
+
+function toCoordinate(code: string): number[][] {
   if (isValidCode(code) === false) {
     throw new Error(`'${code}' is invalid mesh code.`)
   }
@@ -329,22 +333,17 @@ function toGeoJSON(code: string, properties: object = {}) {
       maxY = minY + MESH.LEVEL_125.DISTANCE.LAT
     }
   }
-  return createGeoJSON(minX, maxX, minY, maxY, properties)
-}
-
-function createGeoJSON(
-  minX: number,
-  maxX: number,
-  minY: number,
-  maxY: number,
-  properties = {}
-) {
   const ne = [maxX, maxY]
   const nw = [minX, maxY]
   const sw = [minX, minY]
   const se = [maxX, minY]
-  // 北東 -> 北西 -> 南西 -> 南東 -> 北東
-  const coordinates = [[ne, nw, sw, se, ne]]
+  // 北東 -> 北西 -> 南西 -> 南東
+  return [ne, nw, sw, se]
+}
+
+function createGeoJSON(coordinate: number[][], properties: object = {}) {
+  coordinate.push(coordinate[0])
+  const coordinates = [coordinate]
   return {
     type: 'Feature',
     properties,
@@ -355,37 +354,122 @@ function createGeoJSON(
   }
 }
 
-function getCodes(code: string | null = null) {
-  if (code === null) {
+function getCodes(code: string | null = null, level: number | null = null) {
+  if (code === null && level === null) {
     return LEVEL_80000_CODES
+  }
+  if (code === null) {
+    throw new Error('code is required.')
+  }
+  if (level === null) {
+    throw new Error('level is required.')
   }
   if (isValidCode(code) === false) {
     throw new Error(`'${code}' is invalid mesh code.`)
   }
-  const codes = []
-  const level = getLevel(code)
-  if (level === 80000) {
-    // 2次メッシュ
+  if (AREA_MESH_LEVELS.includes(level) === false) {
+    throw new Error(
+      `${level} is invalid level. available : ${AREA_MESH_LEVELS.join(', ')}`
+    )
+  }
+  const currentLevel = getLevel(code)
+  if (currentLevel <= level) {
+    throw new Error('code level is lower than the specified level.')
+  }
+
+  const lv10000Codes: string[] = []
+  if (currentLevel > 10000) {
     for (let y2 = 0; y2 < MESH.LEVEL_10000.DIVISION.Y; y2++) {
       for (let x2 = 0; x2 < MESH.LEVEL_10000.DIVISION.X; x2++) {
-        codes.push(`${code}${y2}${x2}`)
+        lv10000Codes.push(`${code}${y2}${x2}`)
       }
     }
-  } else if (level === 10000) {
-    // 3次メッシュ
-    for (let y3 = 0; y3 < MESH.LEVEL_1000.DIVISION.Y; y3++) {
-      for (let x3 = 0; x3 < MESH.LEVEL_1000.DIVISION.X; x3++) {
-        codes.push(`${code}${y3}${x3}`)
-      }
+    if (level === 10000) {
+      return lv10000Codes
     }
-  } else if (level === 1000 || level === 500 || level === 250) {
-    // 4次,5次,6次メッシュ
-    const DIVISION_NUM = 4 // 分割数(=マスの数)
-    for (let i = 1; i <= DIVISION_NUM; i++) {
-      codes.push(`${code}${i}`)
+  } else {
+    lv10000Codes.push(code.slice(0, 6))
+  }
+
+  if (INTEGRATION_AREA_MESH_LEVELS.includes(level)) {
+    if (level === 5000) {
+      const lv5000Codes: string[] = []
+      lv10000Codes.forEach((lv10000Code) => {
+        const DIVISION_NUM = 4 // 分割数(=マスの数)
+        for (let i = 1; i <= DIVISION_NUM; i++) {
+          lv5000Codes.push(`${lv10000Code}${i}`)
+        }
+      })
+      return lv5000Codes
+    } else if (level === 2000) {
+      const lv2000Codes: string[] = []
+      lv10000Codes.forEach((lv10000Code) => {
+        const range = [0, 2, 4, 6, 8]
+        range.forEach((y) => {
+          range.forEach((x) => {
+            lv2000Codes.push(`${lv10000Code}${y}${x}`)
+          })
+        })
+      })
+      return lv2000Codes
+    }
+  } else {
+    const lv1000Codes: string[] = []
+    if (currentLevel > 1000) {
+      lv10000Codes.forEach((lv10000Code) => {
+        for (let y3 = 0; y3 < MESH.LEVEL_1000.DIVISION.Y; y3++) {
+          for (let x3 = 0; x3 < MESH.LEVEL_1000.DIVISION.X; x3++) {
+            lv1000Codes.push(`${lv10000Code}${y3}${x3}`)
+          }
+        }
+      })
+      if (level === 1000) {
+        return lv1000Codes
+      }
+    } else {
+      lv1000Codes.push(code.slice(0, 8))
+    }
+    const lv500Codes: string[] = []
+    if (currentLevel > 500) {
+      lv1000Codes.forEach((lv1000Code) => {
+        const DIVISION_NUM = 4 // 分割数(=マスの数)
+        for (let i = 1; i <= DIVISION_NUM; i++) {
+          lv500Codes.push(`${lv1000Code}${i}`)
+        }
+      })
+      if (level === 500) {
+        return lv500Codes
+      }
+    } else {
+      lv500Codes.push(code.slice(0, 9))
+    }
+    const lv250Codes: string[] = []
+    if (currentLevel > 250) {
+      lv500Codes.forEach((lv500Code) => {
+        const DIVISION_NUM = 4 // 分割数(=マスの数)
+        for (let i = 1; i <= DIVISION_NUM; i++) {
+          lv250Codes.push(`${lv500Code}${i}`)
+        }
+      })
+      if (level === 250) {
+        return lv250Codes
+      }
+    } else {
+      lv250Codes.push(code.slice(0, 10))
+    }
+    const lv125Codes: string[] = []
+    if (currentLevel > 125) {
+      lv250Codes.forEach((lv250Code) => {
+        const DIVISION_NUM = 4 // 分割数(=マスの数)
+        for (let i = 1; i <= DIVISION_NUM; i++) {
+          lv125Codes.push(`${lv250Code}${i}`)
+        }
+      })
+      if (level === 125) {
+        return lv125Codes
+      }
     }
   }
-  return codes
 }
 
 function isIntegrationAreaMesh(code: string) {

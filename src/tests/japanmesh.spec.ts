@@ -270,7 +270,39 @@ test('japanmesh.getCodes', () => {
     '533976',
     '533977',
   ]
-  expect(japanmesh.getCodes('5339')).toEqual(lv10000Codes)
+  expect(japanmesh.getCodes('5339', 10000)).toEqual(lv10000Codes)
+
+  const lv5000Codes = ['5339451', '5339452', '5339453', '5339454']
+  expect(japanmesh.getCodes('533945', 5000)).toEqual(lv5000Codes)
+
+  const lv2000Codes = [
+    '53394500',
+    '53394502',
+    '53394504',
+    '53394506',
+    '53394508',
+    '53394520',
+    '53394522',
+    '53394524',
+    '53394526',
+    '53394528',
+    '53394540',
+    '53394542',
+    '53394544',
+    '53394546',
+    '53394548',
+    '53394560',
+    '53394562',
+    '53394564',
+    '53394566',
+    '53394568',
+    '53394580',
+    '53394582',
+    '53394584',
+    '53394586',
+    '53394588',
+  ]
+  expect(japanmesh.getCodes('533945', 2000)).toEqual(lv2000Codes)
 
   const lv1000Codes = [
     '53394500',
@@ -374,13 +406,13 @@ test('japanmesh.getCodes', () => {
     '53394598',
     '53394599',
   ]
-  expect(japanmesh.getCodes('533945')).toEqual(lv1000Codes)
+  expect(japanmesh.getCodes('533945', 1000)).toEqual(lv1000Codes)
 
   const lv500Codes = ['533945471', '533945472', '533945473', '533945474']
-  expect(japanmesh.getCodes('53394547')).toEqual(lv500Codes)
+  expect(japanmesh.getCodes('53394547', 500)).toEqual(lv500Codes)
 
   const lv250Codes = ['5339454711', '5339454712', '5339454713', '5339454714']
-  expect(japanmesh.getCodes('533945471')).toEqual(lv250Codes)
+  expect(japanmesh.getCodes('533945471', 250)).toEqual(lv250Codes)
 
   const lv125Codes = [
     '53394547111',
@@ -388,5 +420,34 @@ test('japanmesh.getCodes', () => {
     '53394547113',
     '53394547114',
   ]
-  expect(japanmesh.getCodes('5339454711')).toEqual(lv125Codes)
+  expect(japanmesh.getCodes('5339454711', 125)).toEqual(lv125Codes)
+})
+
+test('japanmesh.getCodes: コード未指定で例外が発生すること', () => {
+  expect(() => japanmesh.getCodes(null, 125)).toThrow()
+})
+
+test('japanmesh.getCodes: レベル未指定で例外が発生すること', () => {
+  expect(() => japanmesh.getCodes('5339')).toThrow()
+})
+
+test('japanmesh.getCodes: 無効なコード指定で例外が発生すること', () => {
+  expect(() => japanmesh.getCodes('9', 125)).toThrow()
+  expect(() => japanmesh.getCodes('99', 125)).toThrow()
+  expect(() => japanmesh.getCodes('999', 125)).toThrow()
+  expect(() => japanmesh.getCodes('9999', 125)).toThrow()
+  expect(() => japanmesh.getCodes('999999', 125)).toThrow()
+  expect(() => japanmesh.getCodes('9999999', 125)).toThrow()
+  expect(() => japanmesh.getCodes('99999999', 125)).toThrow()
+  expect(() => japanmesh.getCodes('999999999', 125)).toThrow()
+  expect(() => japanmesh.getCodes('9999999999', 125)).toThrow()
+  expect(() => japanmesh.getCodes('99999999999', 125)).toThrow()
+})
+
+test('japanmesh.getCodes: 無効なレベル指定で例外が発生すること', () => {
+  expect(() => japanmesh.getCodes('5339', 9999)).toThrow()
+})
+
+test('japanmesh.getCodes: 指定したレベルがコードのレベルよりも上の場合例外が発生すること', () => {
+  expect(() => japanmesh.getCodes('533945', 80000)).toThrow()
 })
