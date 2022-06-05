@@ -1,7 +1,3 @@
-export const AREA_MESH_LEVELS = [80000, 10000, 5000, 2000, 1000, 500, 250, 125]
-
-export const INTEGRATION_AREA_MESH_LEVELS = [10000, 5000, 2000]
-
 // 第１次地域区画の全メッシュコード
 // https://www.e-stat.go.jp/pdf/gis/primary_mesh_jouhou.pdf
 // prettier-ignore
@@ -10,12 +6,8 @@ export const LEVEL_80000_CODES = ['3036', '3622', '3623', '3624', '3631', '3641'
 export const MESH = {
   // 第1次地域区画
   LEVEL_80000: {
+    LEVEL: 80000,
     DIGIT: 4, // コード桁数
-    DIVISION: {
-      // メッシュ分割数
-      X: 32,
-      Y: 39,
-    },
     DISTANCE: {
       // 緯度経度の間隔(単位:度) (緯度: 40分, 経度: 1度)
       LAT: 40 / 60,
@@ -43,14 +35,11 @@ export const MESH = {
   },
   // 第2次地域区画
   LEVEL_10000: {
+    LEVEL: 10000,
     DIGIT: 6,
     RANGE: {
       MIN: 0,
       MAX: 7,
-    },
-    DIVISION: {
-      X: 8,
-      Y: 8,
     },
     // 緯度: ５分, 経度: ７分30秒
     DISTANCE: {
@@ -60,6 +49,7 @@ export const MESH = {
   },
   // 5倍地域メッシュ
   LEVEL_5000: {
+    LEVEL: 5000,
     DIGIT: 7,
     RANGE: {
       MIN: 1,
@@ -73,6 +63,7 @@ export const MESH = {
   },
   // 2倍地域メッシュ
   LEVEL_2000: {
+    LEVEL: 2000,
     DIGIT: 9,
     RANGE: {
       MIN: 0,
@@ -86,14 +77,11 @@ export const MESH = {
   },
   // 基準地域メッシュ(第3次地域区画)
   LEVEL_1000: {
+    LEVEL: 1000,
     DIGIT: 8,
     RANGE: {
       MIN: 0,
       MAX: 9,
-    },
-    DIVISION: {
-      X: 10,
-      Y: 10,
     },
     // 緯度: 30秒, 経度: 45秒
     DISTANCE: {
@@ -103,14 +91,11 @@ export const MESH = {
   },
   // 2分の1地域メッシュ
   LEVEL_500: {
+    LEVEL: 500,
     DIGIT: 9,
     RANGE: {
       MIN: 1,
       MAX: 4,
-    },
-    DIVISION: {
-      X: 2,
-      Y: 2,
     },
     // 緯度: 15秒, 経度: 22.5秒
     DISTANCE: {
@@ -120,14 +105,11 @@ export const MESH = {
   },
   // 4分の1地域メッシュ
   LEVEL_250: {
+    LEVEL: 250,
     DIGIT: 10,
     RANGE: {
       MIN: 1,
       MAX: 4,
-    },
-    DIVISION: {
-      X: 2,
-      Y: 2,
     },
     // 緯度: 7.5秒, 経度: 11.25秒
     DISTANCE: {
@@ -137,14 +119,11 @@ export const MESH = {
   },
   // 8分の1地域メッシュ
   LEVEL_125: {
+    LEVEL: 125,
     DIGIT: 11,
     RANGE: {
       MIN: 1,
       MAX: 4,
-    },
-    DIVISION: {
-      X: 2,
-      Y: 2,
     },
     // 緯度: 3.75秒, 経度: 5.625秒
     DISTANCE: {
@@ -153,3 +132,11 @@ export const MESH = {
     },
   },
 }
+
+export const AREA_MESH_LEVELS = Object.values(MESH).map((m) => m.LEVEL)
+
+export const INTEGRATION_AREA_MESH_LEVELS = [
+  MESH.LEVEL_10000.LEVEL,
+  MESH.LEVEL_5000.LEVEL,
+  MESH.LEVEL_2000.LEVEL,
+]

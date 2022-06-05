@@ -21,7 +21,7 @@ function isValidCode(code: string) {
   }
 
   // 第1次地域区画
-  if (!LEVEL_80000_CODES.includes(code.slice(0, 4))) {
+  if (!LEVEL_80000_CODES.includes(code.slice(0, MESH.LEVEL_80000.DIGIT))) {
     return false
   }
 
@@ -116,21 +116,21 @@ function getLevel(code: string) {
   }
   const digit = code.length
   if (digit === MESH.LEVEL_80000.DIGIT) {
-    return 80000
+    return MESH.LEVEL_80000.LEVEL
   } else if (digit === MESH.LEVEL_10000.DIGIT) {
-    return 10000
+    return MESH.LEVEL_10000.LEVEL
   } else if (digit === MESH.LEVEL_5000.DIGIT) {
-    return 5000
+    return MESH.LEVEL_5000.LEVEL
   } else if (digit === MESH.LEVEL_2000.DIGIT && code[code.length - 1] === '5') {
-    return 2000
+    return MESH.LEVEL_2000.LEVEL
   } else if (digit === MESH.LEVEL_1000.DIGIT) {
-    return 1000
+    return MESH.LEVEL_1000.LEVEL
   } else if (digit === MESH.LEVEL_500.DIGIT) {
-    return 500
+    return MESH.LEVEL_500.LEVEL
   } else if (digit === MESH.LEVEL_250.DIGIT) {
-    return 250
+    return MESH.LEVEL_250.LEVEL
   } else {
-    return 125
+    return MESH.LEVEL_125.LEVEL
   }
 }
 
@@ -138,7 +138,7 @@ function getLevel(code: string) {
  * 緯度経度から地域メッシュコードを取得する。
  * 算出式 : https://www.stat.go.jp/data/mesh/pdf/gaiyo1.pdf
  */
-function toCode(lat: number, lng: number, level = 125) {
+function toCode(lat: number, lng: number, level = MESH.LEVEL_125.LEVEL) {
   if (AREA_MESH_LEVELS.includes(level) === false) {
     throw new Error(`invalid level. available : ${AREA_MESH_LEVELS.join(', ')}`)
   }
@@ -189,13 +189,13 @@ function toCode(lat: number, lng: number, level = 125) {
   }
 
   switch (level) {
-    case 80000:
+    case MESH.LEVEL_80000.LEVEL:
       return code.slice(0, MESH.LEVEL_80000.DIGIT)
-    case 1000:
+    case MESH.LEVEL_1000.LEVEL:
       return code.slice(0, MESH.LEVEL_1000.DIGIT)
-    case 500:
+    case MESH.LEVEL_500.LEVEL:
       return code.slice(0, MESH.LEVEL_500.DIGIT)
-    case 250:
+    case MESH.LEVEL_250.LEVEL:
       return code.slice(0, MESH.LEVEL_250.DIGIT)
     default:
       return code
@@ -224,11 +224,11 @@ function toCodeForIntegrationAreaMesh(lat: number, lng: number, level: number) {
 
   let code = `${p}${u}${q}${v}`
 
-  if (level === 5000) {
+  if (level === MESH.LEVEL_5000.LEVEL) {
     const r = Math.floor((b * 60) / 150)
     const w = Math.floor((g * 60) / 225)
     code += r + (w + 1)
-  } else if (level === 2000) {
+  } else if (level === MESH.LEVEL_2000.LEVEL) {
     const r = Math.floor((b * 60) / 60) * 2
     const w = Math.floor((g * 60) / 90) * 2
     code += `${r}${w}5`
@@ -378,30 +378,41 @@ function getCodes(code: string | null = null, level: number | null = null) {
   }
 
   const lv10000Codes: string[] = []
-  if (currentLevel > 10000) {
-    for (let y2 = 0; y2 < MESH.LEVEL_10000.DIVISION.Y; y2++) {
-      for (let x2 = 0; x2 < MESH.LEVEL_10000.DIVISION.X; x2++) {
-        lv10000Codes.push(`${code}${y2}${x2}`)
+  if (currentLevel > MESH.LEVEL_10000.LEVEL) {
+    for (
+      let y = MESH.LEVEL_10000.RANGE.MIN;
+      y <= MESH.LEVEL_10000.RANGE.MAX;
+      y++
+    ) {
+      for (
+        let x = MESH.LEVEL_10000.RANGE.MIN;
+        x <= MESH.LEVEL_10000.RANGE.MAX;
+        x++
+      ) {
+        lv10000Codes.push(`${code}${y}${x}`)
       }
     }
-    if (level === 10000) {
+    if (level === MESH.LEVEL_10000.LEVEL) {
       return lv10000Codes
     }
   } else {
-    lv10000Codes.push(code.slice(0, 6))
+    lv10000Codes.push(code.slice(0, MESH.LEVEL_10000.DIGIT))
   }
 
   if (INTEGRATION_AREA_MESH_LEVELS.includes(level)) {
-    if (level === 5000) {
+    if (level === MESH.LEVEL_5000.LEVEL) {
       const lv5000Codes: string[] = []
       lv10000Codes.forEach((lv10000Code) => {
-        const DIVISION_NUM = 4 // 分割数(=マスの数)
-        for (let i = 1; i <= DIVISION_NUM; i++) {
-          lv5000Codes.push(`${lv10000Code}${i}`)
+        for (
+          let xy = MESH.LEVEL_5000.RANGE.MIN;
+          xy <= MESH.LEVEL_5000.RANGE.MAX;
+          xy++
+        ) {
+          lv5000Codes.push(`${lv10000Code}${xy}`)
         }
       })
       return lv5000Codes
-    } else if (level === 2000) {
+    } else if (level === MESH.LEVEL_2000.LEVEL) {
       const lv2000Codes: string[] = []
       lv10000Codes.forEach((lv10000Code) => {
         const range = [0, 2, 4, 6, 8]
@@ -415,57 +426,74 @@ function getCodes(code: string | null = null, level: number | null = null) {
     }
   } else {
     const lv1000Codes: string[] = []
-    if (currentLevel > 1000) {
+    if (currentLevel > MESH.LEVEL_1000.LEVEL) {
       lv10000Codes.forEach((lv10000Code) => {
-        for (let y3 = 0; y3 < MESH.LEVEL_1000.DIVISION.Y; y3++) {
-          for (let x3 = 0; x3 < MESH.LEVEL_1000.DIVISION.X; x3++) {
-            lv1000Codes.push(`${lv10000Code}${y3}${x3}`)
+        for (
+          let y = MESH.LEVEL_1000.RANGE.MIN;
+          y <= MESH.LEVEL_1000.RANGE.MAX;
+          y++
+        ) {
+          for (
+            let x = MESH.LEVEL_1000.RANGE.MIN;
+            x <= MESH.LEVEL_1000.RANGE.MAX;
+            x++
+          ) {
+            lv1000Codes.push(`${lv10000Code}${y}${x}`)
           }
         }
       })
-      if (level === 1000) {
+      if (level === MESH.LEVEL_1000.LEVEL) {
         return lv1000Codes
       }
     } else {
-      lv1000Codes.push(code.slice(0, 8))
+      lv1000Codes.push(code.slice(0, MESH.LEVEL_1000.DIGIT))
     }
     const lv500Codes: string[] = []
-    if (currentLevel > 500) {
+    if (currentLevel > MESH.LEVEL_500.LEVEL) {
       lv1000Codes.forEach((lv1000Code) => {
-        const DIVISION_NUM = 4 // 分割数(=マスの数)
-        for (let i = 1; i <= DIVISION_NUM; i++) {
-          lv500Codes.push(`${lv1000Code}${i}`)
+        for (
+          let xy = MESH.LEVEL_500.RANGE.MIN;
+          xy <= MESH.LEVEL_500.RANGE.MAX;
+          xy++
+        ) {
+          lv500Codes.push(`${lv1000Code}${xy}`)
         }
       })
-      if (level === 500) {
+      if (level === MESH.LEVEL_500.LEVEL) {
         return lv500Codes
       }
     } else {
-      lv500Codes.push(code.slice(0, 9))
+      lv500Codes.push(code.slice(0, MESH.LEVEL_500.DIGIT))
     }
     const lv250Codes: string[] = []
-    if (currentLevel > 250) {
+    if (currentLevel > MESH.LEVEL_250.LEVEL) {
       lv500Codes.forEach((lv500Code) => {
-        const DIVISION_NUM = 4 // 分割数(=マスの数)
-        for (let i = 1; i <= DIVISION_NUM; i++) {
-          lv250Codes.push(`${lv500Code}${i}`)
+        for (
+          let xy = MESH.LEVEL_250.RANGE.MIN;
+          xy <= MESH.LEVEL_250.RANGE.MAX;
+          xy++
+        ) {
+          lv250Codes.push(`${lv500Code}${xy}`)
         }
       })
-      if (level === 250) {
+      if (level === MESH.LEVEL_250.LEVEL) {
         return lv250Codes
       }
     } else {
-      lv250Codes.push(code.slice(0, 10))
+      lv250Codes.push(code.slice(0, MESH.LEVEL_250.DIGIT))
     }
     const lv125Codes: string[] = []
-    if (currentLevel > 125) {
+    if (currentLevel > MESH.LEVEL_125.LEVEL) {
       lv250Codes.forEach((lv250Code) => {
-        const DIVISION_NUM = 4 // 分割数(=マスの数)
-        for (let i = 1; i <= DIVISION_NUM; i++) {
-          lv125Codes.push(`${lv250Code}${i}`)
+        for (
+          let xy = MESH.LEVEL_125.RANGE.MIN;
+          xy <= MESH.LEVEL_125.RANGE.MAX;
+          xy++
+        ) {
+          lv125Codes.push(`${lv250Code}${xy}`)
         }
       })
-      if (level === 125) {
+      if (level === MESH.LEVEL_125.LEVEL) {
         return lv125Codes
       }
     }
