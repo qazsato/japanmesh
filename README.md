@@ -31,7 +31,11 @@ $ npm install japanmesh
 ## Usage
 
 ```javascript
-const japanmesh = require('japanmesh')
+import { japanmesh } from 'japanmesh'
+
+OR
+
+const { japanmesh } = require('japanmesh')
 ```
 
 ### japanmesh.toCode(lat, lng[, level])

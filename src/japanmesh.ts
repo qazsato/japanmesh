@@ -547,7 +547,7 @@ function isIntegrationAreaMesh(code: string) {
   return false
 }
 
-export default {
+export const japanmesh = {
   toCode,
   toGeoJSON,
   getLevel,
