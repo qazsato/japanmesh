@@ -17,6 +17,17 @@ test('japanmesh.toCode: レベル未指定で8分の1地域メッシュ(125m)の
   expect(japanmesh.toCode(35.70078, 139.71475)).toBe('53394547112')
 })
 
+test('japanmesh.toCode: 日本国外の緯度経度指定で例外が発生すること', () => {
+  expect(() => japanmesh.toCode(0, 0, 80000)).toThrow()
+  expect(() => japanmesh.toCode(0, 0, 10000)).toThrow()
+  expect(() => japanmesh.toCode(0, 0, 5000)).toThrow()
+  expect(() => japanmesh.toCode(0, 0, 2000)).toThrow()
+  expect(() => japanmesh.toCode(0, 0, 1000)).toThrow()
+  expect(() => japanmesh.toCode(0, 0, 500)).toThrow()
+  expect(() => japanmesh.toCode(0, 0, 250)).toThrow()
+  expect(() => japanmesh.toCode(0, 0, 125)).toThrow()
+})
+
 test('japanmesh.toCode: 無効なレベル指定で例外が発生すること', () => {
   // NOTE: v1.0 以前のレベル定義は 1 ~ 6 であった
   expect(() => japanmesh.toCode(35.70078, 139.71475, 1)).toThrow()
@@ -75,11 +86,20 @@ test('japanmesh.getLevel: 無効なコード指定で例外が発生すること
   expect(() => japanmesh.getLevel('99999999999')).toThrow()
 })
 
+test('japanmesh.getLevel: 区画定義外の存在しない無効なコード指定で例外が発生すること', () => {
+  expect(() => japanmesh.getLevel('533999')).toThrow()
+  expect(() => japanmesh.getLevel('5339459')).toThrow()
+  expect(() => japanmesh.getLevel('533945995')).toThrow()
+  expect(() => japanmesh.getLevel('533945479')).toThrow()
+  expect(() => japanmesh.getLevel('5339454719')).toThrow()
+  expect(() => japanmesh.getLevel('53394547119')).toThrow()
+})
+
 test('japanmesh.getCodes: コード、レベル未指定で第１次地域区画の全メッシュコードが取得できること', () => {
   expect(japanmesh.getCodes()).toEqual(LEVEL_80000_CODES)
 })
 
-test('japanmesh.getCodes: コード、レベル指定で配下のコードが取得できること', () => {
+test('japanmesh.getCodes: コード、直下のレベル指定で配下のコードが取得できること', () => {
   expect(japanmesh.getCodes('5339', 10000)).toEqual(CODE.LV10000_CODES_5339)
   expect(japanmesh.getCodes('533945', 5000)).toEqual(CODE.LV5000_CODES_533945)
   expect(japanmesh.getCodes('533945', 2000)).toEqual(CODE.LV2000_CODES_533945)
@@ -90,6 +110,23 @@ test('japanmesh.getCodes: コード、レベル指定で配下のコードが取
   )
   expect(japanmesh.getCodes('5339454711', 125)).toEqual(
     CODE.LV125_CODES_5339454711
+  )
+})
+
+test('japanmesh.getCodes: 5kmメッシュのコード、レベル指定で配下のコードが取得できること', () => {
+  expect(japanmesh.getCodes('5339451', 2000)).toEqual(CODE.LV2000_CODES_5339451)
+  expect(japanmesh.getCodes('5339452', 2000)).toEqual(CODE.LV2000_CODES_5339452)
+  expect(japanmesh.getCodes('5339453', 2000)).toEqual(CODE.LV2000_CODES_5339453)
+  expect(japanmesh.getCodes('5339454', 2000)).toEqual(CODE.LV2000_CODES_5339454)
+  expect(japanmesh.getCodes('5339451', 1000)).toEqual(CODE.LV1000_CODES_5339451)
+  expect(japanmesh.getCodes('5339452', 1000)).toEqual(CODE.LV1000_CODES_5339452)
+  expect(japanmesh.getCodes('5339453', 1000)).toEqual(CODE.LV1000_CODES_5339453)
+  expect(japanmesh.getCodes('5339454', 1000)).toEqual(CODE.LV1000_CODES_5339454)
+})
+
+test('japanmesh.getCodes: 2kmメッシュのコード、レベル指定で配下のコードが取得できること', () => {
+  expect(japanmesh.getCodes('533945465', 1000)).toEqual(
+    CODE.LV1000_CODES_533945465
   )
 })
 

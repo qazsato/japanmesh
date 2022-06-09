@@ -144,7 +144,11 @@ function toCode(lat: number, lng: number, level = MESH.LEVEL_125.LEVEL) {
   }
 
   if (INTEGRATION_AREA_MESH_LEVELS.includes(level)) {
-    return toCodeForIntegrationAreaMesh(lat, lng, level)
+    const code = toCodeForIntegrationAreaMesh(lat, lng, level)
+    if (isValidCode(code) === false) {
+      throw new Error(`lat: ${lat} and lng: ${lng} are invalid location.`)
+    }
+    return code
   }
 
   // （１）緯度よりｐ，ｑ，ｒ，ｓ，ｔを算出
