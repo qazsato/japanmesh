@@ -28,15 +28,15 @@
   },
   "homepage": "https://github.com/qazsato/japanmesh#readme",
   "devDependencies": {
-    "@types/jest": "27.5.1",
-    "@typescript-eslint/eslint-plugin": "5.26.0",
-    "@typescript-eslint/parser": "5.26.0",
-    "eslint": "8.16.0",
+    "@types/jest": "28.1.1",
+    "@typescript-eslint/eslint-plugin": "5.27.1",
+    "@typescript-eslint/parser": "5.27.1",
+    "eslint": "8.17.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-prettier": "4.0.0",
-    "jest": "28.1.0",
+    "jest": "28.1.1",
     "prettier": "2.6.2",
-    "ts-jest": "28.0.3",
-    "typescript": "4.7.2"
+    "ts-jest": "28.0.4",
+    "typescript": "4.7.3"
   }
 }
