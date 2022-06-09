@@ -7,62 +7,69 @@
 ## About
 
 JIS 規格で定められている地域メッシュを扱うためのユーティリティです。  
-地域メッシュコード、緯度経度の相互変換がおこなえます。
+JISX0410 の仕様に準拠しており、地域メッシュコード、緯度経度の相互変換がおこなえます。
 
 地域メッシュの区分は下記の通りです。  
 
-レベル | 区画の種類 | コード桁数 | 一辺の長さ
-:-|:-|:-|:-
-1 | 第１次地域区画 | 4桁 | 約80km
-2 | 第２次地域区画 | 6桁 | 約10km
-3 | 基準地域メッシュ(第３次地域区画) | 8桁 | 約1km
-4 | ２分の１地域メッシュ | 9桁 | 約500m
-5 | ４分の１地域メッシュ | 10桁 | 約250m
-6 | ８分の１地域メッシュ | 11桁 | 約125m
+| レベル　 | 区画の種類　                   | 一辺の長さ　 | コード桁数　      | コード例                                                                          |
+| ------ | --------------------------- | --------- | -------------- | ------------------------------------------------------------------------------- |
+| 80000  | 第1次地域区画                  | 約80km　   | 4桁　           | [5339](https://gist.github.com/qazsato/fb26be6de0ecbefd107d7c1eff35cc5e)        |
+| 10000  | 10倍地域メッシュ (第2次地域区画)　 | 約10km　   | 6桁　           | [533945](https://gist.github.com/qazsato/027f8dca59b2895d1040adc7e8621cc4)      |
+| 5000   | 5倍地域メッシュ　               | 約5km　    | 7桁　           | [5339452](https://gist.github.com/qazsato/f9b7660c672c62a84febab62cbb29138)     |
+| 2000   | 2倍地域メッシュ　               | 約2km　    | 9桁 (末尾5固定)　 | [533945465](https://gist.github.com/qazsato/f5d511b69fa2ef81cab60777c50b3269)   |
+| 1000   | 基準地域メッシュ(第3次地域区画)    | 約1km　    | 8桁　           | [53394529](https://gist.github.com/qazsato/d9f219ba60e2d5193a8c1d65bce39fed)    |
+| 500    | 2分の1地域メッシュ              | 約500m　   | 9桁　           | [533945292](https://gist.github.com/qazsato/bd3fe7aa7fbff441fd543a92814692b5)   |
+| 250    | 4分の1地域メッシュ              | 約250m　   | 10桁　          | [5339452922](https://gist.github.com/qazsato/557430aaf0504f558b5cc45fcbe257b0)  |
+| 125    | 8分の1地域メッシュ              | 約125m　   | 11桁　          | [53394529221](https://gist.github.com/qazsato/443642c41a6b074d7ec2bf3d5204bb56) |
 
 ## Installation
 
-```
+```bash
 $ npm install japanmesh
 ```
 
 ## Usage
 
 ```javascript
-const japanmesh = require('japanmesh')
+import { japanmesh } from 'japanmesh'
+```
+or
+```javascript
+const { japanmesh } = require('japanmesh')
 ```
 
-### japanmesh.toCode(lat, lng[, level])
+### japanmesh.toCode(lat, lng, [level])
 
 指定した緯度経度(WGS84)から、地域メッシュコードを取得します。  
 
 ```javascript
-japanmesh.toCode(35.70078, 139.71475, 3)
-=> '53394547'
+japanmesh.toCode(35.70078, 139.71475, 1000)
+// => '53394547'
 ```
 
-### japanmesh.toGeoJSON(code[, properties])
+### japanmesh.toGeoJSON(code, [properties])
 
 指定した地域メッシュコードから、ポリゴンデータ(GeoJSON)を取得します。  
 
 ```javascript
 japanmesh.toGeoJSON('53394547')
-=>{
-    "type": "Feature",
-    "properties": {},
-    "geometry": {
-      "type": "Polygon",
-      "coordinates": [
-        [
-          [139.725, 35.70833333333333],
-          [139.7125, 35.70833333333333],
-          [139.7125, 35.699999999999996],
-          [139.725, 35.699999999999996],
-          [139.725, 35.70833333333333]
-        ]
-      ]
-    }
-  }
+// =>
+// {
+//   "type": "Feature",
+//   "properties": {},
+//   "geometry": {
+//     "type": "Polygon",
+//     "coordinates": [
+//       [
+//         [139.725, 35.70833333333333],
+//         [139.7125, 35.70833333333333],
+//         [139.7125, 35.699999999999996],
+//         [139.725, 35.699999999999996],
+//         [139.725, 35.70833333333333]
+//       ]
+//     ]
+//   }
+// }
 ```
 
 ### japanmesh.getLevel(code)
@@ -71,18 +78,22 @@ japanmesh.toGeoJSON('53394547')
 
 ```javascript
 japanmesh.getLevel('53394547')
-=> 3
+// => 1000
 ```
 
-### japanmesh.getCodes([code])
+### japanmesh.getCodes([code], [level])
 
-指定した地域メッシュコードの直下のレベルの地域メッシュコードを取得します。  
-未指定時はレベル1(第１次地域区画)の地域メッシュコードを取得します。
+指定した地域メッシュコード内の該当レベルの地域メッシュコードを取得します。  
+code, level 未指定時は第1次地域区画の地域メッシュコードを取得します。
 
 ```javascript
-japanmesh.getCodes('53394547')
-=> [ '533945471', '533945472', '533945473', '533945474' ]
+japanmesh.getCodes('53394547', 500)
+// => [ '533945471', '533945472', '533945473', '533945474' ]
 ```
+
+## Reference
+
+https://www.stat.go.jp/data/mesh/pdf/gaiyo1.pdf
 
 ## License
 
