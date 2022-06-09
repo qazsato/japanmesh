@@ -24,7 +24,7 @@ JISX0410 の仕様に準拠しており、地域メッシュコード、緯度�
 
 ## Installation
 
-```
+```bash
 $ npm install japanmesh
 ```
 
@@ -32,9 +32,9 @@ $ npm install japanmesh
 
 ```javascript
 import { japanmesh } from 'japanmesh'
-
-OR
-
+```
+or
+```javascript
 const { japanmesh } = require('japanmesh')
 ```
 
@@ -44,7 +44,7 @@ const { japanmesh } = require('japanmesh')
 
 ```javascript
 japanmesh.toCode(35.70078, 139.71475, 1000)
-=> '53394547'
+// => '53394547'
 ```
 
 ### japanmesh.toGeoJSON(code, [properties])
@@ -53,22 +53,23 @@ japanmesh.toCode(35.70078, 139.71475, 1000)
 
 ```javascript
 japanmesh.toGeoJSON('53394547')
-=>{
-    "type": "Feature",
-    "properties": {},
-    "geometry": {
-      "type": "Polygon",
-      "coordinates": [
-        [
-          [139.725, 35.70833333333333],
-          [139.7125, 35.70833333333333],
-          [139.7125, 35.699999999999996],
-          [139.725, 35.699999999999996],
-          [139.725, 35.70833333333333]
-        ]
-      ]
-    }
-  }
+// =>
+// {
+//   "type": "Feature",
+//   "properties": {},
+//   "geometry": {
+//     "type": "Polygon",
+//     "coordinates": [
+//       [
+//         [139.725, 35.70833333333333],
+//         [139.7125, 35.70833333333333],
+//         [139.7125, 35.699999999999996],
+//         [139.725, 35.699999999999996],
+//         [139.725, 35.70833333333333]
+//       ]
+//     ]
+//   }
+// }
 ```
 
 ### japanmesh.getLevel(code)
@@ -77,7 +78,7 @@ japanmesh.toGeoJSON('53394547')
 
 ```javascript
 japanmesh.getLevel('53394547')
-=> 1000
+// => 1000
 ```
 
 ### japanmesh.getCodes([code], [level])
@@ -87,8 +88,12 @@ code, level 未指定時は第1次地域区画の地域メッシュコードを�
 
 ```javascript
 japanmesh.getCodes('53394547', 500)
-=> [ '533945471', '533945472', '533945473', '533945474' ]
+// => [ '533945471', '533945472', '533945473', '533945474' ]
 ```
+
+## Reference
+
+https://www.stat.go.jp/data/mesh/pdf/gaiyo1.pdf
 
 ## License
 
