@@ -1,7 +1,10 @@
 {
   "name": "japanmesh",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
+  "engines": {
+    "node": "18.x"
+  },
   "main": "dist/japanmesh.js",
   "types": "dist/japanmesh.d.ts",
   "scripts": {
