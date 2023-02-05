@@ -16,4 +16,5 @@ jobs:
         with:
           node-version-file: 'package.json'
       - run: npm ci
+      - run: npm run lint
       - run: npm test
