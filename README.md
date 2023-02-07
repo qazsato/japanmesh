@@ -46,8 +46,33 @@ const { japanmesh } = require('japanmesh')
 
 ```javascript
 japanmesh.toCode(35.70078, 139.71475, 1000)
-
 => '53394547'
+```
+
+### japanmesh.toLatLngBounds(code)
+
+指定した地域メッシュコードから、メッシュの境界インスタンスを取得します。
+
+```javascript
+const bounds = japanmesh.toLatLngBounds('53394547')
+
+bounds.getCenter() // 境界の中央座標
+=> { lat: 35.704166666666666, lng: 139.71875 }
+
+bounds.getNorthEast() // 境界の北東座標
+=> { lat: 35.70833333333333, lng: 139.725 }
+
+bounds.getNorthWest() // 境界の北西座標
+=> { lat: 35.70833333333333, lng: 139.7125 }
+
+bounds.getSouthWest() // 境界の南西座標
+=> { lat: 35.699999999999996, lng: 139.7125 }
+
+bounds.getSouthEast() // 境界の南東座標
+=> { lat: 139.7125, lng: 139.725 }
+
+bounds.contains({ lat: 35.70416666, lng: 139.71875 }) // 境界内か否か
+=> true
 ```
 
 ### japanmesh.toGeoJSON(code, [properties])
@@ -56,7 +81,6 @@ japanmesh.toCode(35.70078, 139.71475, 1000)
 
 ```javascript
 japanmesh.toGeoJSON('53394547')
-
 =>
 {
   "type": "Feature",
@@ -82,7 +106,6 @@ japanmesh.toGeoJSON('53394547')
 
 ```javascript
 japanmesh.getLevel('53394547')
-
 => 1000
 ```
 
@@ -93,7 +116,6 @@ code, level 未指定時は第 1 次地域区画の地域メッシュコード�
 
 ```javascript
 japanmesh.getCodes('53394547', 500)
-
 => [ '533945471', '533945472', '533945473', '533945474' ]
 ```
 
