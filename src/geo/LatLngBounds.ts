@@ -37,7 +37,7 @@ export default class LatLngBounds {
   }
 
   getSouthEast(): LatLng {
-    return new LatLng(this.westLng, this.eastLng)
+    return new LatLng(this.southLat, this.eastLng)
   }
 
   contains(latLng: LatLng) {
