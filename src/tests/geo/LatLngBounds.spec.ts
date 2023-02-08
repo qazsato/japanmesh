@@ -1,4 +1,4 @@
-import LatLngBounds from '../../geo/LatLngBounds'
+import { LatLngBounds } from '../../geo/LatLngBounds'
 
 test('LatLngBounds.getCenter', () => {
   const bounds = new LatLngBounds(1, 1, 0, 0)

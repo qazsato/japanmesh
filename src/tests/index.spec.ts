@@ -1,4 +1,4 @@
-import { japanmesh } from '../japanmesh'
+import { japanmesh } from '../index'
 import { LEVEL_80000_CODES } from '../constants'
 import { GEO_JSON, CODE } from './data'
 
