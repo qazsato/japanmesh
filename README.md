@@ -69,7 +69,7 @@ bounds.getSouthWest() // 境界の南西座標
 => { lat: 35.699999999999996, lng: 139.7125 }
 
 bounds.getSouthEast() // 境界の南東座標
-=> { lat: 139.7125, lng: 139.725 }
+=> { lat: 35.699999999999996, lng: 139.725 }
 
 bounds.contains({ lat: 35.70416666, lng: 139.71875 }) // 境界内か否か
 => true
