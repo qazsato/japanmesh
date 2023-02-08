@@ -5,8 +5,8 @@
   "engines": {
     "node": "18.x"
   },
-  "main": "dist/japanmesh.js",
-  "types": "dist/japanmesh.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest",
     "lint": "eslint --ext .ts --ignore-path .gitignore .",

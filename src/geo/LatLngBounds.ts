@@ -1,6 +1,6 @@
-import LatLng from './LatLng'
+import { LatLng } from './LatLng'
 
-export default class LatLngBounds {
+export class LatLngBounds {
   private northLat: number
   private eastLng: number
   private southLat: number
