@@ -5,6 +5,8 @@ import {
   LEVEL_80000_CODES,
 } from './constants'
 
+import LatLngBounds from './geo/LatLngBounds'
+
 function isValidCode(code: string) {
   // 桁数チェック
   if (
@@ -239,6 +241,13 @@ function toCodeForIntegrationAreaMesh(lat: number, lng: number, level: number) {
   }
 
   return code
+}
+
+function toLatLngBounds(code: string) {
+  const coordinate = toCoordinate(code)
+  const ne = coordinate[0] // 北東
+  const sw = coordinate[2] // 南西
+  return new LatLngBounds(ne[1], ne[0], sw[1], sw[0])
 }
 
 function toGeoJSON(code: string, properties: object = {}) {
@@ -553,6 +562,7 @@ function isIntegrationAreaMesh(code: string) {
 
 export const japanmesh = {
   toCode,
+  toLatLngBounds,
   toGeoJSON,
   getLevel,
   getCodes,

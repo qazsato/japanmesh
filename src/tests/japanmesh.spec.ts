@@ -38,6 +38,46 @@ test('japanmesh.toCode: 無効なレベル指定で例外が発生すること',
   expect(() => japanmesh.toCode(35.70078, 139.71475, 6)).toThrow()
 })
 
+test('japanmesh.toLatLngBounds: 存在するコード指定で LatLngBounds オブジェクトが取得できること', () => {
+  expect(japanmesh.toLatLngBounds('5438').constructor.name).toEqual(
+    'LatLngBounds'
+  )
+  expect(japanmesh.toLatLngBounds('533945').constructor.name).toEqual(
+    'LatLngBounds'
+  )
+  expect(japanmesh.toLatLngBounds('5339452').constructor.name).toEqual(
+    'LatLngBounds'
+  )
+  expect(japanmesh.toLatLngBounds('533945465').constructor.name).toEqual(
+    'LatLngBounds'
+  )
+  expect(japanmesh.toLatLngBounds('53394547').constructor.name).toEqual(
+    'LatLngBounds'
+  )
+  expect(japanmesh.toLatLngBounds('533945471').constructor.name).toEqual(
+    'LatLngBounds'
+  )
+  expect(japanmesh.toLatLngBounds('5339454711').constructor.name).toEqual(
+    'LatLngBounds'
+  )
+  expect(japanmesh.toLatLngBounds('53394547112').constructor.name).toEqual(
+    'LatLngBounds'
+  )
+})
+
+test('japanmesh.toLatLngBounds: 無効なコード指定で例外が発生すること', () => {
+  expect(() => japanmesh.toLatLngBounds('9')).toThrow()
+  expect(() => japanmesh.toLatLngBounds('99')).toThrow()
+  expect(() => japanmesh.toLatLngBounds('999')).toThrow()
+  expect(() => japanmesh.toLatLngBounds('9999')).toThrow()
+  expect(() => japanmesh.toLatLngBounds('999999')).toThrow()
+  expect(() => japanmesh.toLatLngBounds('9999999')).toThrow()
+  expect(() => japanmesh.toLatLngBounds('99999999')).toThrow()
+  expect(() => japanmesh.toLatLngBounds('999999999')).toThrow()
+  expect(() => japanmesh.toLatLngBounds('9999999999')).toThrow()
+  expect(() => japanmesh.toLatLngBounds('99999999999')).toThrow()
+})
+
 test('japanmesh.toGeoJSON: 存在するコード指定で GEO JSON が取得できること', () => {
   expect(japanmesh.toGeoJSON('5438')).toEqual(GEO_JSON[5438])
   expect(japanmesh.toGeoJSON('533945')).toEqual(GEO_JSON[533945])
