@@ -51,7 +51,7 @@ japanmesh.toCode(35.70078, 139.71475, 1000)
 
 ### japanmesh.toLatLngBounds(code)
 
-指定した地域メッシュコードから、メッシュの境界インスタンスを取得します。
+指定した地域メッシュコードから、緯度経度の境界オブジェクトを取得します。
 
 ```javascript
 const bounds = japanmesh.toLatLngBounds('53394547')
