@@ -1,6 +1,6 @@
 {
   "name": "japanmesh",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "地域メッシュのコードと緯度経度の変換ユーティリティ",
   "engines": {
     "node": "18.x"
