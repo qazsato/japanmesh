@@ -10,7 +10,7 @@ export class LatLngBounds {
     northLat: number,
     eastLng: number,
     southLat: number,
-    westLng: number
+    westLng: number,
   ) {
     this.northLat = northLat
     this.eastLng = eastLng

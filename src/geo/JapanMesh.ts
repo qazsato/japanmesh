@@ -14,7 +14,7 @@ export class JapanMesh {
   static toCode(lat: number, lng: number, level = MESH.LEVEL_125.LEVEL) {
     if (AREA_MESH_LEVELS.includes(level) === false) {
       throw new Error(
-        `invalid level. available : ${AREA_MESH_LEVELS.join(', ')}`
+        `invalid level. available : ${AREA_MESH_LEVELS.join(', ')}`,
       )
     }
 
@@ -135,7 +135,7 @@ export class JapanMesh {
     }
     if (AREA_MESH_LEVELS.includes(level) === false) {
       throw new Error(
-        `${level} is invalid level. available : ${AREA_MESH_LEVELS.join(', ')}`
+        `${level} is invalid level. available : ${AREA_MESH_LEVELS.join(', ')}`,
       )
     }
     const currentLevel = JapanMesh.getLevel(code)
