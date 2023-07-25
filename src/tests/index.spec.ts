@@ -40,28 +40,28 @@ test('japanmesh.toCode: 無効なレベル指定で例外が発生すること',
 
 test('japanmesh.toLatLngBounds: 存在するコード指定で LatLngBounds オブジェクトが取得できること', () => {
   expect(japanmesh.toLatLngBounds('5438').constructor.name).toEqual(
-    'LatLngBounds'
+    'LatLngBounds',
   )
   expect(japanmesh.toLatLngBounds('533945').constructor.name).toEqual(
-    'LatLngBounds'
+    'LatLngBounds',
   )
   expect(japanmesh.toLatLngBounds('5339452').constructor.name).toEqual(
-    'LatLngBounds'
+    'LatLngBounds',
   )
   expect(japanmesh.toLatLngBounds('533945465').constructor.name).toEqual(
-    'LatLngBounds'
+    'LatLngBounds',
   )
   expect(japanmesh.toLatLngBounds('53394547').constructor.name).toEqual(
-    'LatLngBounds'
+    'LatLngBounds',
   )
   expect(japanmesh.toLatLngBounds('533945471').constructor.name).toEqual(
-    'LatLngBounds'
+    'LatLngBounds',
   )
   expect(japanmesh.toLatLngBounds('5339454711').constructor.name).toEqual(
-    'LatLngBounds'
+    'LatLngBounds',
   )
   expect(japanmesh.toLatLngBounds('53394547112').constructor.name).toEqual(
-    'LatLngBounds'
+    'LatLngBounds',
   )
 })
 
@@ -146,10 +146,10 @@ test('japanmesh.getCodes: コード、直下のレベル指定で配下のコー
   expect(japanmesh.getCodes('533945', 1000)).toEqual(CODE.LV1000_CODES_533945)
   expect(japanmesh.getCodes('53394547', 500)).toEqual(CODE.LV500_CODES_53394547)
   expect(japanmesh.getCodes('533945471', 250)).toEqual(
-    CODE.LV250_CODES_533945471
+    CODE.LV250_CODES_533945471,
   )
   expect(japanmesh.getCodes('5339454711', 125)).toEqual(
-    CODE.LV125_CODES_5339454711
+    CODE.LV125_CODES_5339454711,
   )
 })
 
@@ -166,7 +166,7 @@ test('japanmesh.getCodes: 5kmメッシュのコード、レベル指定で配下
 
 test('japanmesh.getCodes: 2kmメッシュのコード、レベル指定で配下のコードが取得できること', () => {
   expect(japanmesh.getCodes('533945465', 1000)).toEqual(
-    CODE.LV1000_CODES_533945465
+    CODE.LV1000_CODES_533945465,
   )
 })
 
