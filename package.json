@@ -1,7 +1,7 @@
 {
   "name": "japanmesh",
   "version": "1.1.1",
-  "description": "",
+  "description": "地域メッシュのコードと緯度経度の変換ユーティリティ",
   "engines": {
     "node": "18.x"
   },
@@ -31,15 +31,15 @@
   },
   "homepage": "https://github.com/qazsato/japanmesh#readme",
   "devDependencies": {
-    "@types/jest": "29.4.0",
-    "@typescript-eslint/eslint-plugin": "5.51.0",
-    "@typescript-eslint/parser": "5.51.0",
-    "eslint": "8.33.0",
-    "eslint-config-prettier": "8.6.0",
-    "eslint-plugin-prettier": "4.2.1",
-    "jest": "29.4.1",
-    "prettier": "2.8.3",
-    "ts-jest": "29.0.5",
-    "typescript": "4.9.5"
+    "@types/jest": "29.5.3",
+    "@typescript-eslint/eslint-plugin": "6.2.0",
+    "@typescript-eslint/parser": "6.2.0",
+    "eslint": "8.45.0",
+    "eslint-config-prettier": "8.8.0",
+    "eslint-plugin-prettier": "5.0.0",
+    "jest": "29.6.1",
+    "prettier": "3.0.0",
+    "ts-jest": "29.1.1",
+    "typescript": "5.1.6"
   }
 }
