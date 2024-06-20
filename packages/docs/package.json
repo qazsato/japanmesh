@@ -1,0 +1,21 @@
+{
+  "name": "japanmesh-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "@nuxt/ui": "^2.17.0",
+    "@types/geojson": "^7946.0.14",
+    "japanmesh": "^1.1.5",
+    "maplibre-gl": "^4.4.1",
+    "nuxt": "^3.12.1",
+    "pmtiles": "^3.0.6"
+  }
+}
