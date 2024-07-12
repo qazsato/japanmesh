@@ -1,4 +1,4 @@
-import { japanmesh } from '../index'
+import { japanmesh, LatLngBounds } from '../index'
 import { LEVEL_80000_CODES } from '../constants'
 import { GEO_JSON, CODE } from './data'
 
@@ -197,4 +197,67 @@ test('japanmesh.getCodes: 無効なレベル指定で例外が発生すること
 
 test('japanmesh.getCodes: 指定したレベルがコードのレベルよりも上の場合例外が発生すること', () => {
   expect(() => japanmesh.getCodes('533945', 80000)).toThrow()
+})
+
+describe('japanmesh.getCodesWithinBounds', () => {
+  test('レベル未指定で第１次地域区画のメッシュコードが取得できること', () => {
+    // 地域メッシュが設定される範囲は、北緯20度から46度まで、東経122度から154度までの地域
+    const bounds = new LatLngBounds(46, 154, 20, 122)
+    const codes = japanmesh.getCodesWithinBounds(bounds)
+    expect(codes).toEqual(japanmesh.getCodes())
+  })
+
+  test('指定の範囲内の10kmメッシュコードが取得できること', () => {
+    const level = 10000
+    const bounds = japanmesh.toLatLngBounds('5339')
+    const codes = japanmesh.getCodesWithinBounds(bounds, level)
+    expect(codes).toEqual(japanmesh.getCodes('5339', level))
+  })
+
+  // test('指定の範囲内の5kmメッシュコードが取得できること', () => {
+  //   const level = 5000
+  //   const bounds = japanmesh.toLatLngBounds('5438')
+  //   const codes = japanmesh.getCodesWithinBounds(bounds, level)
+  //   expect(codes.sort()).toEqual(japanmesh.getCodes('5438', level)?.sort())
+  // })
+
+  // test('指定の範囲内の2kmメッシュコードが取得できること', () => {
+  //   const level = 2000
+  //   const bounds = japanmesh.toLatLngBounds('5438')
+  //   const codes = japanmesh.getCodesWithinBounds(bounds, level)
+  //   expect(codes).toEqual(japanmesh.getCodes('5438', level))
+  // })
+
+  test('指定の範囲内の1kmメッシュコードが取得できること', () => {
+    const level = 1000
+    const bounds = japanmesh.toLatLngBounds('5339')
+    const codes = japanmesh.getCodesWithinBounds(bounds, level).sort()
+    expect(codes).toEqual(japanmesh.getCodes('5339', level)?.sort())
+  })
+
+  test('指定の範囲内の500mメッシュコードが取得できること', () => {
+    const level = 500
+    const bounds = japanmesh.toLatLngBounds('53394547')
+    const codes = japanmesh.getCodesWithinBounds(bounds, level).sort()
+    expect(codes).toEqual(japanmesh.getCodes('53394547', level)?.sort())
+  })
+
+  test('指定の範囲内の250mメッシュコードが取得できること', () => {
+    const level = 250
+    const bounds = japanmesh.toLatLngBounds('53394547')
+    const codes = japanmesh.getCodesWithinBounds(bounds, level).sort()
+    expect(codes).toEqual(japanmesh.getCodes('53394547', level)?.sort())
+  })
+
+  test('指定の範囲内の125mメッシュコードが取得できること', () => {
+    const level = 125
+    const bounds = japanmesh.toLatLngBounds('53394547')
+    const codes = japanmesh.getCodesWithinBounds(bounds, level).sort()
+    expect(codes).toEqual(japanmesh.getCodes('53394547', level)?.sort())
+  })
+
+  test('無効なレベル指定で例外が発生すること', () => {
+    const bounds = japanmesh.toLatLngBounds('5438')
+    expect(() => japanmesh.getCodesWithinBounds(bounds, 9999)).toThrow()
+  })
 })

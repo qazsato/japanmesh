@@ -301,6 +301,48 @@ export class JapanMesh {
       }
     }
   }
+
+  static getCodesWithinBounds(
+    bounds: LatLngBounds,
+    level: number = MESH.LEVEL_80000.LEVEL,
+  ) {
+    if (AREA_MESH_LEVELS.includes(level) === false) {
+      throw new Error(
+        `${level} is invalid level. available : ${AREA_MESH_LEVELS.join(', ')}`,
+      )
+    }
+
+    const ne = bounds.getNorthEast()
+    const sw = bounds.getSouthWest()
+    const diffLat = ne.lat - sw.lat
+    const diffLng = ne.lng - sw.lng
+
+    const distance = getDistance(level)
+    const sideX = distance.LAT
+    const sideY = distance.LNG
+    const meshMaxX = Math.ceil(diffLat / sideX)
+    const meshMaxY = Math.ceil(diffLng / sideY)
+
+    const codes: string[] = []
+
+    const startLat = sw.lat + sideX / 2
+    const startLng = sw.lng + sideY / 2
+    for (let x = 0; x < meshMaxX; x++) {
+      for (let y = 0; y < meshMaxY; y++) {
+        const lat = startLat + sideX * x
+        const lng = startLng + sideY * y
+        try {
+          const code = JapanMesh.toCode(lat, lng, level)
+          if (!codes.includes(code)) {
+            codes.push(code)
+          }
+        } catch (e) {
+          // NOTE: 日本国土外は変換エラーとなるが処理を継続する
+        }
+      }
+    }
+    return codes
+  }
 }
 
 function isValidCode(code: string) {
@@ -564,4 +606,25 @@ function isIntegrationAreaMesh(code: string) {
     return true
   }
   return false
+}
+
+function getDistance(level?: number) {
+  switch (level) {
+    case MESH.LEVEL_10000.LEVEL:
+      return MESH.LEVEL_10000.DISTANCE
+    case MESH.LEVEL_5000.LEVEL:
+      return MESH.LEVEL_5000.DISTANCE
+    case MESH.LEVEL_2000.LEVEL:
+      return MESH.LEVEL_2000.DISTANCE
+    case MESH.LEVEL_1000.LEVEL:
+      return MESH.LEVEL_1000.DISTANCE
+    case MESH.LEVEL_500.LEVEL:
+      return MESH.LEVEL_500.DISTANCE
+    case MESH.LEVEL_250.LEVEL:
+      return MESH.LEVEL_250.DISTANCE
+    case MESH.LEVEL_125.LEVEL:
+      return MESH.LEVEL_125.DISTANCE
+    default:
+      return MESH.LEVEL_80000.DISTANCE
+  }
 }
