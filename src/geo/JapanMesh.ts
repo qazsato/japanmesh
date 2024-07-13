@@ -18,14 +18,6 @@ export class JapanMesh {
       )
     }
 
-    if (INTEGRATION_AREA_MESH_LEVELS.includes(level)) {
-      const code = toCodeForIntegrationAreaMesh(lat, lng, level)
-      if (isValidCode(code) === false) {
-        throw new Error(`lat: ${lat} and lng: ${lng} are invalid location.`)
-      }
-      return code
-    }
-
     // （１）緯度よりｐ，ｑ，ｒ，ｓ，ｔを算出
     const p = Math.floor((lat * 60) / 40)
     const a = (lat * 60) % 40
@@ -67,9 +59,16 @@ export class JapanMesh {
       throw new Error(`lat: ${lat} and lng: ${lng} are invalid location.`)
     }
 
+    const lv10000Code = code.slice(0, MESH.LEVEL_10000.DIGIT)
     switch (level) {
       case MESH.LEVEL_80000.LEVEL:
         return code.slice(0, MESH.LEVEL_80000.DIGIT)
+      case MESH.LEVEL_10000.LEVEL:
+        return lv10000Code
+      case MESH.LEVEL_5000.LEVEL:
+        return toCodeForIntegrationAreaMesh(lv10000Code, lat, lng, level)
+      case MESH.LEVEL_2000.LEVEL:
+        return toCodeForIntegrationAreaMesh(lv10000Code, lat, lng, level)
       case MESH.LEVEL_1000.LEVEL:
         return code.slice(0, MESH.LEVEL_1000.DIGIT)
       case MESH.LEVEL_500.LEVEL:
@@ -301,6 +300,48 @@ export class JapanMesh {
       }
     }
   }
+
+  static getCodesWithinBounds(
+    bounds: LatLngBounds,
+    level: number = MESH.LEVEL_80000.LEVEL,
+  ) {
+    if (AREA_MESH_LEVELS.includes(level) === false) {
+      throw new Error(
+        `${level} is invalid level. available : ${AREA_MESH_LEVELS.join(', ')}`,
+      )
+    }
+
+    const ne = bounds.getNorthEast()
+    const sw = bounds.getSouthWest()
+    const diffLat = ne.lat - sw.lat
+    const diffLng = ne.lng - sw.lng
+
+    const distance = getDistance(level)
+    const sideX = distance.LAT
+    const sideY = distance.LNG
+    const meshMaxX = Math.round(diffLat / sideX)
+    const meshMaxY = Math.round(diffLng / sideY)
+
+    const codes: string[] = []
+
+    const startLat = sw.lat + sideX / 2
+    const startLng = sw.lng + sideY / 2
+    for (let x = 0; x < meshMaxX; x++) {
+      for (let y = 0; y < meshMaxY; y++) {
+        const lat = startLat + sideX * x
+        const lng = startLng + sideY * y
+        try {
+          const code = JapanMesh.toCode(lat, lng, level)
+          if (!codes.includes(code)) {
+            codes.push(code)
+          }
+        } catch (e) {
+          // NOTE: 日本国土外は変換エラーとなるが処理を継続する
+        }
+      }
+    }
+    return codes
+  }
 }
 
 function isValidCode(code: string) {
@@ -411,33 +452,36 @@ function isValidCode(code: string) {
 /**
  * 緯度経度から地域メッシュコードを取得する。統合地域メッシュ用。
  * 算出式 : https://www.stat.go.jp/data/mesh/pdf/gaiyo1.pdf
+ * @param {string} lv10000Code
  * @param {number} lat
  * @param {number} lng
  * @param {number} level
  */
-function toCodeForIntegrationAreaMesh(lat: number, lng: number, level: number) {
-  // （１）緯度よりｐ，ｑを算出
-  const p = Math.floor((lat * 60) / 40)
-  const a = (lat * 60) % 40
-  const q = Math.floor(a / 5)
-  const b = a % 5
-
-  // （２）経度よりｕ，ｖを算出
-  const u = Math.floor(lng - 100)
-  const f = lng - 100 - u
-  const v = Math.floor((f * 60) / 7.5)
-  const g = (f * 60) % 7.5
-
-  let code = `${p}${u}${q}${v}`
-
+function toCodeForIntegrationAreaMesh(
+  lv10000Code: string,
+  lat: number,
+  lng: number,
+  level: number,
+) {
+  let code = lv10000Code
+  const bounds = JapanMesh.toLatLngBounds(lv10000Code)
+  const sw = bounds.getSouthWest()
   if (level === MESH.LEVEL_5000.LEVEL) {
-    const r = Math.floor((b * 60) / 150)
-    const w = Math.floor((g * 60) / 225)
-    code += r + (w + 1)
+    const y = Math.floor((lat - sw.lat) / MESH.LEVEL_5000.DISTANCE.LAT)
+    const x = Math.floor((lng - sw.lng) / MESH.LEVEL_5000.DISTANCE.LNG)
+    if (x === 0 && y === 0) {
+      code += '1'
+    } else if (x === 1 && y === 0) {
+      code += '2'
+    } else if (x === 0 && y === 1) {
+      code += '3'
+    } else {
+      code += '4'
+    }
   } else if (level === MESH.LEVEL_2000.LEVEL) {
-    const r = Math.floor((b * 60) / 60) * 2
-    const w = Math.floor((g * 60) / 90) * 2
-    code += `${r}${w}5`
+    const y = Math.floor((lat - sw.lat) / MESH.LEVEL_2000.DISTANCE.LAT) * 2
+    const x = Math.floor((lng - sw.lng) / MESH.LEVEL_2000.DISTANCE.LNG) * 2
+    code += `${y}${x}5`
   }
 
   return code
@@ -564,4 +608,25 @@ function isIntegrationAreaMesh(code: string) {
     return true
   }
   return false
+}
+
+function getDistance(level?: number) {
+  switch (level) {
+    case MESH.LEVEL_10000.LEVEL:
+      return MESH.LEVEL_10000.DISTANCE
+    case MESH.LEVEL_5000.LEVEL:
+      return MESH.LEVEL_5000.DISTANCE
+    case MESH.LEVEL_2000.LEVEL:
+      return MESH.LEVEL_2000.DISTANCE
+    case MESH.LEVEL_1000.LEVEL:
+      return MESH.LEVEL_1000.DISTANCE
+    case MESH.LEVEL_500.LEVEL:
+      return MESH.LEVEL_500.DISTANCE
+    case MESH.LEVEL_250.LEVEL:
+      return MESH.LEVEL_250.DISTANCE
+    case MESH.LEVEL_125.LEVEL:
+      return MESH.LEVEL_125.DISTANCE
+    default:
+      return MESH.LEVEL_80000.DISTANCE
+  }
 }
