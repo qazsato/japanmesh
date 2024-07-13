@@ -214,19 +214,19 @@ describe('japanmesh.getCodesWithinBounds', () => {
     expect(codes).toEqual(japanmesh.getCodes('5339', level))
   })
 
-  // test('指定の範囲内の5kmメッシュコードが取得できること', () => {
-  //   const level = 5000
-  //   const bounds = japanmesh.toLatLngBounds('5438')
-  //   const codes = japanmesh.getCodesWithinBounds(bounds, level)
-  //   expect(codes.sort()).toEqual(japanmesh.getCodes('5438', level)?.sort())
-  // })
+  test('指定の範囲内の5kmメッシュコードが取得できること', () => {
+    const level = 5000
+    const bounds = japanmesh.toLatLngBounds('533945')
+    const codes = japanmesh.getCodesWithinBounds(bounds, level)
+    expect(codes.sort()).toEqual(japanmesh.getCodes('533945', level)?.sort())
+  })
 
-  // test('指定の範囲内の2kmメッシュコードが取得できること', () => {
-  //   const level = 2000
-  //   const bounds = japanmesh.toLatLngBounds('5438')
-  //   const codes = japanmesh.getCodesWithinBounds(bounds, level)
-  //   expect(codes).toEqual(japanmesh.getCodes('5438', level))
-  // })
+  test('指定の範囲内の2kmメッシュコードが取得できること', () => {
+    const level = 2000
+    const bounds = japanmesh.toLatLngBounds('533945')
+    const codes = japanmesh.getCodesWithinBounds(bounds, level)
+    expect(codes.sort()).toEqual(japanmesh.getCodes('533945', level)?.sort())
+  })
 
   test('指定の範囲内の1kmメッシュコードが取得できること', () => {
     const level = 1000
