@@ -119,6 +119,19 @@ japanmesh.getCodes('53394547', 500)
 => [ '533945471', '533945472', '533945473', '533945474' ]
 ```
 
+### japanmesh.getCodesWithinBounds(bounds, [level])
+
+指定した境界内の該当レベルの地域メッシュコードを取得します。  
+level 未指定時は第 1 次地域区画の地域メッシュコードを取得します。
+
+```javascript
+import { japanmesh, LatLngBounds } from 'japanmesh'
+
+const bounds = new LatLngBounds(36, 140, 35, 139)
+japanmesh.getCodesWithinBounds(bounds, 10000)
+=> [ '523940', '523941', '523942', '523943', '523944', ... ]
+```
+
 ## Reference
 
 https://www.stat.go.jp/data/mesh/pdf/gaiyo1.pdf
