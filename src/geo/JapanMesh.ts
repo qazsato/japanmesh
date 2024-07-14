@@ -319,17 +319,22 @@ export class JapanMesh {
     const distance = getDistance(level)
     const sideX = distance.LAT
     const sideY = distance.LNG
-    const meshMaxX = Math.round(diffLat / sideX)
-    const meshMaxY = Math.round(diffLng / sideY)
+    const meshMaxX = Math.ceil(diffLat / sideX) + 1
+    const meshMaxY = Math.ceil(diffLng / sideY) + 1
 
     const codes: string[] = []
 
-    const startLat = sw.lat + sideX / 2
-    const startLng = sw.lng + sideY / 2
-    for (let x = 0; x < meshMaxX; x++) {
-      for (let y = 0; y < meshMaxY; y++) {
-        const lat = startLat + sideX * x
-        const lng = startLng + sideY * y
+    const OFFSET = 0.00000001 // 境界の内側に収めるための非常に小さなオフセット(約1.1mm)
+    for (let x = 0; x <= meshMaxX; x++) {
+      for (let y = 0; y <= meshMaxY; y++) {
+        const lat = Math.min(
+          Math.max(sw.lat + sideX * x - sideX / 2, sw.lat + OFFSET),
+          ne.lat - OFFSET,
+        )
+        const lng = Math.min(
+          Math.max(sw.lng + sideY * y - sideY / 2, sw.lng + OFFSET),
+          ne.lng - OFFSET,
+        )
         try {
           const code = JapanMesh.toCode(lat, lng, level)
           if (!codes.includes(code)) {
