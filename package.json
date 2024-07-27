@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest",
-    "lint": "eslint --ext .ts --ignore-path .gitignore .",
+    "lint": "eslint --ext .ts --ignore-path .eslintignore .",
     "dev": "tsc -w",
     "build": "tsc"
   },
