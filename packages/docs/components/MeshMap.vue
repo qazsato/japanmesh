@@ -83,10 +83,15 @@ watch(colorMode, () => {
 
 watch(selectedCode, (code) => {
   if (!map) return
-  if (code && !japanmesh.isValidCode(code)) return
-  const level = code ? japanmesh.getLevel(code) : getLevelByZoom(map.getZoom())
-  drawMesh(map, level)
-  router.push({ query: { code } })
+  if (code) {
+    if (!japanmesh.isValidCode(code)) return
+    moveToMesh(code)
+    router.push({ query: { code } })
+  } else {
+    const level = getLevelByZoom(map.getZoom())
+    drawMesh(map, level)
+    router.push({ query: {} })
+  }
 })
 
 watch(selectedLevel, (mesh) => {
@@ -137,18 +142,7 @@ onMounted(() => {
     drawMesh(map, defaultLevel)
     map.on('click', `polygon-mesh-fill`, (e) => {
       const features = e.features as maplibregl.MapGeoJSONFeature[];
-      const code = features[0].properties.code
-      const bounds = japanmesh.toLatLngBounds(code)
-      const center = bounds.getCenter()
-      const level = japanmesh.getLevel(code)
-      selectedCode.value = code
-      if (map) {
-        map.jumpTo({
-          center: [center.lng, center.lat],
-          zoom: getZoomByCode(code)
-        })
-        drawMesh(map, level)
-      }
+      selectedCode.value = features[0].properties.code
     })
   })
 
@@ -158,6 +152,21 @@ onMounted(() => {
     drawMesh(map, level)
   })
 })
+
+function moveToMesh(code: string) {
+  if (!map) return
+  const bounds = japanmesh.toLatLngBounds(code)
+  const center = bounds.getCenter()
+  const zoom = getZoomByCode(code)
+  if (map.getZoom() === zoom) {
+    map.panTo([center.lng, center.lat])
+  } else {
+    map.flyTo({
+      center: [center.lng, center.lat],
+      zoom
+    })
+  }
+}
 
 function drawMesh(map: Map, level?: number) {
   const meshLevel = MESH_LEVELS.find((m) => m.id === level)
