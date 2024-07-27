@@ -71,14 +71,8 @@ let map: Map | null = null
 
 const mapStyleUrl = computed(() => colorMode.preference === 'light' ? MAP_STYLE.LIGHT : MAP_STYLE.DARK)
 
-const isValidCode = computed(() => {
-  try {
-    japanmesh.toGeoJSON(selectedCode.value)
-    return true
-  } catch {
-    return false
-  }
-})
+const isValidCode = computed(() => japanmesh.isValidCode(selectedCode.value))
+
 watch(colorMode, () => {
   if (!map) return
   map.setStyle(mapStyleUrl.value)
@@ -89,12 +83,14 @@ watch(colorMode, () => {
 
 watch(selectedCode, (code) => {
   if (!map) return
-  try {
-    const level = code ? japanmesh.getLevel(code) : getLevelByZoom(map.getZoom())
-    drawMesh(map, level)
+  if (code) {
+    if (!japanmesh.isValidCode(code)) return
+    moveToMesh(code)
     router.push({ query: { code } })
-  } catch {
-    // NOTE: 不正なコードの場合は何もしない
+  } else {
+    const level = getLevelByZoom(map.getZoom())
+    drawMesh(map, level)
+    router.push({ query: {} })
   }
 })
 
@@ -146,18 +142,7 @@ onMounted(() => {
     drawMesh(map, defaultLevel)
     map.on('click', `polygon-mesh-fill`, (e) => {
       const features = e.features as maplibregl.MapGeoJSONFeature[];
-      const code = features[0].properties.code
-      const bounds = japanmesh.toLatLngBounds(code)
-      const center = bounds.getCenter()
-      const level = japanmesh.getLevel(code)
-      selectedCode.value = code
-      if (map) {
-        map.jumpTo({
-          center: [center.lng, center.lat],
-          zoom: getZoomByCode(code)
-        })
-        drawMesh(map, level)
-      }
+      selectedCode.value = features[0].properties.code
     })
   })
 
@@ -167,6 +152,21 @@ onMounted(() => {
     drawMesh(map, level)
   })
 })
+
+function moveToMesh(code: string) {
+  if (!map) return
+  const bounds = japanmesh.toLatLngBounds(code)
+  const center = bounds.getCenter()
+  const zoom = getZoomByCode(code)
+  if (map.getZoom() === zoom) {
+    map.panTo([center.lng, center.lat])
+  } else {
+    map.flyTo({
+      center: [center.lng, center.lat],
+      zoom
+    })
+  }
+}
 
 function drawMesh(map: Map, level?: number) {
   const meshLevel = MESH_LEVELS.find((m) => m.id === level)

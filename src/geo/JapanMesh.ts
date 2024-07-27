@@ -55,7 +55,7 @@ export class JapanMesh {
     // （４）ｐ，ｑ，ｒ，ｕ，ｖ，ｗ，ｍ、ｎ、ooより地域メッシュ・コードを算出
     const code = `${p}${u}${q}${v}${r}${w}${m}${n}${oo}`
 
-    if (isValidCode(code) === false) {
+    if (JapanMesh.isValidCode(code) === false) {
       throw new Error(`lat: ${lat} and lng: ${lng} are invalid location.`)
     }
 
@@ -93,7 +93,7 @@ export class JapanMesh {
   }
 
   static getLevel(code: string) {
-    if (isValidCode(code) === false) {
+    if (JapanMesh.isValidCode(code) === false) {
       throw new Error(`'${code}' is invalid mesh code.`)
     }
     const digit = code.length
@@ -129,7 +129,7 @@ export class JapanMesh {
     if (level === null) {
       throw new Error('level is required.')
     }
-    if (isValidCode(code) === false) {
+    if (JapanMesh.isValidCode(code) === false) {
       throw new Error(`'${code}' is invalid mesh code.`)
     }
     if (AREA_MESH_LEVELS.includes(level) === false) {
@@ -347,111 +347,111 @@ export class JapanMesh {
     }
     return codes
   }
-}
 
-function isValidCode(code: string) {
-  // 桁数チェック
-  if (
-    code.length !== MESH.LEVEL_80000.DIGIT &&
-    code.length !== MESH.LEVEL_10000.DIGIT &&
-    code.length !== MESH.LEVEL_5000.DIGIT &&
-    code.length !== MESH.LEVEL_2000.DIGIT &&
-    code.length !== MESH.LEVEL_1000.DIGIT &&
-    code.length !== MESH.LEVEL_500.DIGIT &&
-    code.length !== MESH.LEVEL_250.DIGIT &&
-    code.length !== MESH.LEVEL_125.DIGIT
-  ) {
-    return false
-  }
-
-  // 第1次地域区画
-  if (!LEVEL_80000_CODES.includes(code.slice(0, MESH.LEVEL_80000.DIGIT))) {
-    return false
-  }
-
-  if (code.length >= MESH.LEVEL_10000.DIGIT) {
-    // 第2次地域区画 (x, y は 0~7 の範囲となる)
-    const lv10000Y = Number(code[4])
-    const lv10000X = Number(code[5])
+  static isValidCode(code: string) {
+    // 桁数チェック
     if (
-      lv10000Y < MESH.LEVEL_10000.RANGE.MIN ||
-      lv10000Y > MESH.LEVEL_10000.RANGE.MAX ||
-      lv10000X < MESH.LEVEL_10000.RANGE.MIN ||
-      lv10000X > MESH.LEVEL_10000.RANGE.MAX
+      code.length !== MESH.LEVEL_80000.DIGIT &&
+      code.length !== MESH.LEVEL_10000.DIGIT &&
+      code.length !== MESH.LEVEL_5000.DIGIT &&
+      code.length !== MESH.LEVEL_2000.DIGIT &&
+      code.length !== MESH.LEVEL_1000.DIGIT &&
+      code.length !== MESH.LEVEL_500.DIGIT &&
+      code.length !== MESH.LEVEL_250.DIGIT &&
+      code.length !== MESH.LEVEL_125.DIGIT
     ) {
       return false
     }
+
+    // 第1次地域区画
+    if (!LEVEL_80000_CODES.includes(code.slice(0, MESH.LEVEL_80000.DIGIT))) {
+      return false
+    }
+
+    if (code.length >= MESH.LEVEL_10000.DIGIT) {
+      // 第2次地域区画 (x, y は 0~7 の範囲となる)
+      const lv10000Y = Number(code[4])
+      const lv10000X = Number(code[5])
+      if (
+        lv10000Y < MESH.LEVEL_10000.RANGE.MIN ||
+        lv10000Y > MESH.LEVEL_10000.RANGE.MAX ||
+        lv10000X < MESH.LEVEL_10000.RANGE.MIN ||
+        lv10000X > MESH.LEVEL_10000.RANGE.MAX
+      ) {
+        return false
+      }
+    }
+
+    if (isIntegrationAreaMesh(code)) {
+      if (code.length === MESH.LEVEL_5000.DIGIT) {
+        // 5倍地域メッシュ (x, y は 1~4 の範囲となる)
+        const lv5000XY = Number(code[6])
+        if (
+          lv5000XY < MESH.LEVEL_5000.RANGE.MIN ||
+          lv5000XY > MESH.LEVEL_5000.RANGE.MAX
+        ) {
+          return false
+        }
+      } else if (code.length === MESH.LEVEL_2000.DIGIT) {
+        // 2倍地域メッシュ (x, y は 0~8 の範囲の偶数となる)
+        const lv2000Y = Number(code[6])
+        const lv2000X = Number(code[7])
+        const range = [0, 2, 4, 6, 8]
+        if (!range.includes(lv2000Y) || !range.includes(lv2000X)) {
+          return false
+        }
+      }
+    } else {
+      if (code.length >= MESH.LEVEL_1000.DIGIT) {
+        // 基準地域メッシュ(第3次地域区画) (x, y は 0~9 の範囲となる)
+        const lv1000Y = Number(code[6])
+        const lv1000X = Number(code[7])
+        if (
+          lv1000Y < MESH.LEVEL_1000.RANGE.MIN ||
+          lv1000Y > MESH.LEVEL_1000.RANGE.MAX ||
+          lv1000X < MESH.LEVEL_1000.RANGE.MIN ||
+          lv1000X > MESH.LEVEL_1000.RANGE.MAX
+        ) {
+          return false
+        }
+      }
+
+      if (code.length >= MESH.LEVEL_500.DIGIT) {
+        // 2分の1地域メッシュ (x, y は 1~4 の範囲となる)
+        const lv500XY = Number(code[8])
+        if (
+          lv500XY < MESH.LEVEL_500.RANGE.MIN ||
+          lv500XY > MESH.LEVEL_500.RANGE.MAX
+        ) {
+          return false
+        }
+      }
+
+      if (code.length >= MESH.LEVEL_250.DIGIT) {
+        // 4分の1地域メッシュ (x, y は 1~4 の範囲となる)
+        const lv250XY = Number(code[9])
+        if (
+          lv250XY < MESH.LEVEL_250.RANGE.MIN ||
+          lv250XY > MESH.LEVEL_250.RANGE.MAX
+        ) {
+          return false
+        }
+      }
+
+      if (code.length >= MESH.LEVEL_125.DIGIT) {
+        // 8分の1地域メッシュ (x, y は 1~4 の範囲となる)
+        const lv125XY = Number(code[10])
+        if (
+          lv125XY < MESH.LEVEL_125.RANGE.MIN ||
+          lv125XY > MESH.LEVEL_125.RANGE.MAX
+        ) {
+          return false
+        }
+      }
+    }
+
+    return true
   }
-
-  if (isIntegrationAreaMesh(code)) {
-    if (code.length === MESH.LEVEL_5000.DIGIT) {
-      // 5倍地域メッシュ (x, y は 1~4 の範囲となる)
-      const lv5000XY = Number(code[6])
-      if (
-        lv5000XY < MESH.LEVEL_5000.RANGE.MIN ||
-        lv5000XY > MESH.LEVEL_5000.RANGE.MAX
-      ) {
-        return false
-      }
-    } else if (code.length === MESH.LEVEL_2000.DIGIT) {
-      // 2倍地域メッシュ (x, y は 0~8 の範囲の偶数となる)
-      const lv2000Y = Number(code[6])
-      const lv2000X = Number(code[7])
-      const range = [0, 2, 4, 6, 8]
-      if (!range.includes(lv2000Y) || !range.includes(lv2000X)) {
-        return false
-      }
-    }
-  } else {
-    if (code.length >= MESH.LEVEL_1000.DIGIT) {
-      // 基準地域メッシュ(第3次地域区画) (x, y は 0~9 の範囲となる)
-      const lv1000Y = Number(code[6])
-      const lv1000X = Number(code[7])
-      if (
-        lv1000Y < MESH.LEVEL_1000.RANGE.MIN ||
-        lv1000Y > MESH.LEVEL_1000.RANGE.MAX ||
-        lv1000X < MESH.LEVEL_1000.RANGE.MIN ||
-        lv1000X > MESH.LEVEL_1000.RANGE.MAX
-      ) {
-        return false
-      }
-    }
-
-    if (code.length >= MESH.LEVEL_500.DIGIT) {
-      // 2分の1地域メッシュ (x, y は 1~4 の範囲となる)
-      const lv500XY = Number(code[8])
-      if (
-        lv500XY < MESH.LEVEL_500.RANGE.MIN ||
-        lv500XY > MESH.LEVEL_500.RANGE.MAX
-      ) {
-        return false
-      }
-    }
-
-    if (code.length >= MESH.LEVEL_250.DIGIT) {
-      // 4分の1地域メッシュ (x, y は 1~4 の範囲となる)
-      const lv250XY = Number(code[9])
-      if (
-        lv250XY < MESH.LEVEL_250.RANGE.MIN ||
-        lv250XY > MESH.LEVEL_250.RANGE.MAX
-      ) {
-        return false
-      }
-    }
-
-    if (code.length >= MESH.LEVEL_125.DIGIT) {
-      // 8分の1地域メッシュ (x, y は 1~4 の範囲となる)
-      const lv125XY = Number(code[10])
-      if (
-        lv125XY < MESH.LEVEL_125.RANGE.MIN ||
-        lv125XY > MESH.LEVEL_125.RANGE.MAX
-      ) {
-        return false
-      }
-    }
-  }
-
-  return true
 }
 
 /**
@@ -493,7 +493,7 @@ function toCodeForIntegrationAreaMesh(
 }
 
 function toCoordinate(code: string): number[][] {
-  if (isValidCode(code) === false) {
+  if (JapanMesh.isValidCode(code) === false) {
     throw new Error(`'${code}' is invalid mesh code.`)
   }
   const lv80000X = Number(code.slice(2, 4))

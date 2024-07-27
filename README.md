@@ -27,19 +27,13 @@ https://qazsato.github.io/japanmesh で全国の地域メッシュを確認で�
 ## Installation
 
 ```bash
-$ npm install japanmesh
+npm install japanmesh
 ```
 
 ## Usage
 
 ```javascript
 import { japanmesh } from 'japanmesh'
-```
-
-or
-
-```javascript
-const { japanmesh } = require('japanmesh')
 ```
 
 ### japanmesh.toCode(lat, lng, [level])
@@ -132,6 +126,18 @@ import { japanmesh, LatLngBounds } from 'japanmesh'
 const bounds = new LatLngBounds(36, 140, 35, 139) // northLat, eastLng, southLat, westLng
 japanmesh.getCodesWithinBounds(bounds, 10000)
 => [ '523940', '523941', '523942', '523943', '523944', ... ]
+```
+
+### japanmesh.isValidCode(code)
+
+指定した地域メッシュコードが、有効なコードかどうか判定します。
+
+```javascript
+japanmesh.isValidCode('5339')
+=> true
+
+japanmesh.isValidCode('9999')
+=> false
 ```
 
 ## Reference

@@ -289,3 +289,27 @@ describe('japanmesh.getCodesWithinBounds', () => {
     expect(() => japanmesh.getCodesWithinBounds(bounds, 9999)).toThrow()
   })
 })
+
+describe('japanmesh.isValidCode', () => {
+  test('有効なコードの場合 true が返ること', () => {
+    expect(japanmesh.isValidCode('5339')).toBe(true)
+    expect(japanmesh.isValidCode('533945')).toBe(true)
+    expect(japanmesh.isValidCode('5339452')).toBe(true)
+    expect(japanmesh.isValidCode('533945465')).toBe(true)
+    expect(japanmesh.isValidCode('53394529')).toBe(true)
+    expect(japanmesh.isValidCode('533945292')).toBe(true)
+    expect(japanmesh.isValidCode('5339452922')).toBe(true)
+    expect(japanmesh.isValidCode('53394529221')).toBe(true)
+  })
+
+  test('無効なコードの場合 false が返ること', () => {
+    expect(japanmesh.isValidCode('9999')).toBe(false)
+    expect(japanmesh.isValidCode('999999')).toBe(false)
+    expect(japanmesh.isValidCode('9999999')).toBe(false)
+    expect(japanmesh.isValidCode('999999999')).toBe(false)
+    expect(japanmesh.isValidCode('99999999')).toBe(false)
+    expect(japanmesh.isValidCode('999999999')).toBe(false)
+    expect(japanmesh.isValidCode('9999999999')).toBe(false)
+    expect(japanmesh.isValidCode('99999999999')).toBe(false)
+  })
+})
