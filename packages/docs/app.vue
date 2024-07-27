@@ -4,7 +4,6 @@
     <main>
       <MeshMap></MeshMap>
     </main>
-    <UNotifications />
   </div>
 </template>
 

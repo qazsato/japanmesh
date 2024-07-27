@@ -1,52 +1,51 @@
 <template>
   <div class="relative">
-    <div class="absolute top-2 left-2 z-10 flex items-center">
-      <UInput
-        v-model="selectedCode"
-        name="selectedCode"
-        placeholder="メッシュコード"
-        icon="i-heroicons-magnifying-glass-20-solid"
-        autocomplete="off"
-        size="md"
-        :ui="{ icon: { trailing: { pointer: '' } } }"
-      >
-        <template #trailing>
-          <UButton
-            v-show="selectedCode !== ''"
-            color="gray"
-            variant="link"
-            icon="i-heroicons-x-mark-20-solid"
-            :padded="false"
-            @click="selectedCode = ''"
-          />
-        </template>
-      </UInput>
-      <UButton
-        v-if="isValidCode"
-        icon="i-heroicons-clipboard-document"
-        color="white"
-        variant="solid"
-        size="md"
-        class="ml-2"
-        @click="onCopy">
-        GeoJSON をコピー
-      </UButton>
-    </div>
-    <div class="absolute top-2 right-2 z-10 flex items-center">
-      <USelectMenu v-model="selectedLevel" :options="MESH_LEVELS" class="w-80" :disabled="fixedLevel">
-        <template #label>
-          <UBadge variant="outline" class="w-12 justify-center">{{ selectedLevel.level }}</UBadge>
-          <span class="truncate">{{ selectedLevel.name }}</span>
-        </template>
-        <template #option="{ option: mesh }">
-          <UBadge variant="outline" class="w-12 justify-center">{{ mesh.level }}</UBadge>
-          <span class="truncate">{{ mesh.name }}</span>
-        </template>
-      </USelectMenu>
-      <!-- <UTooltip text="メッシュレベルを固定する">
-        <UToggle v-model="fixedLevel" class="mx-2"/>
-      </UTooltip> -->
-    </div>
+    <template v-if="loaded">
+      <div class="absolute top-2 left-2 z-10 flex items-center">
+        <UInput
+          v-model="selectedCode"
+          name="selectedCode"
+          placeholder="メッシュコード"
+          icon="i-heroicons-magnifying-glass-20-solid"
+          autocomplete="off"
+          size="md"
+          :ui="{ icon: { trailing: { pointer: '' } } }"
+        >
+          <template #trailing>
+            <UButton
+              v-show="selectedCode !== ''"
+              color="gray"
+              variant="link"
+              icon="i-heroicons-x-mark-20-solid"
+              :padded="false"
+              @click="selectedCode = ''"
+            />
+          </template>
+        </UInput>
+        <UButton
+          v-if="isValidCode"
+          :icon="copyButtonIcon"
+          color="white"
+          variant="solid"
+          size="md"
+          class="ml-2"
+          @click="onCopy">
+          {{ copyButtonText }}
+        </UButton>
+      </div>
+      <div class="absolute top-2 right-2 z-10 flex items-center">
+        <USelectMenu v-model="selectedLevel" :options="MESH_LEVELS" class="w-80">
+          <template #label>
+            <UBadge variant="outline" class="w-12 justify-center">{{ selectedLevel.level }}</UBadge>
+            <span class="truncate">{{ selectedLevel.name }}</span>
+          </template>
+          <template #option="{ option: mesh }">
+            <UBadge variant="outline" class="w-12 justify-center">{{ mesh.level }}</UBadge>
+            <span class="truncate">{{ mesh.name }}</span>
+          </template>
+        </USelectMenu>
+      </div>
+    </template>
     <div id="map" />
   </div>
 </template>
@@ -62,16 +61,21 @@ import { MAP_STYLE, MESH_LEVELS } from '~/constants'
 const route = useRoute()
 const router = useRouter()
 const colorMode = useColorMode()
-const toast = useToast()
 
 const selectedCode = ref<string>(route.query.code as string || '')
 const selectedLevel = ref(MESH_LEVELS[0])
-const fixedLevel = ref(false)
 let map: Map | null = null
+
+const loaded = ref(false)
+const copied = ref(false)
 
 const mapStyleUrl = computed(() => colorMode.preference === 'light' ? MAP_STYLE.LIGHT : MAP_STYLE.DARK)
 
 const isValidCode = computed(() => japanmesh.isValidCode(selectedCode.value))
+
+const copyButtonIcon = computed(() => copied.value ? 'i-heroicons-clipboard-document-check' : 'i-heroicons-clipboard-document')
+
+const copyButtonText = computed(() => copied.value ? 'コピーしました' : 'GeoJSON をコピー')
 
 watch(colorMode, () => {
   if (!map) return
@@ -85,6 +89,7 @@ watch(selectedCode, (code) => {
   if (!map) return
   if (code) {
     if (!japanmesh.isValidCode(code)) return
+    drawSelectedMesh(map)
     moveToMesh(code)
     router.push({ query: { code } })
   } else {
@@ -96,21 +101,9 @@ watch(selectedCode, (code) => {
 
 watch(selectedLevel, (mesh) => {
   if (!map) return
-  fixedLevel.value = false
   const zoom = map.getZoom()
   if (zoom <= mesh.minZoom || zoom > mesh.maxZoom) {
     map.setZoom(mesh.maxZoom)
-  }
-})
-
-watch(fixedLevel, (value) => {
-  if (!map) return
-  if (value) {
-    map.setMinZoom(selectedLevel.value.minZoom)
-    map.setMaxZoom(selectedLevel.value.maxZoom)
-  } else {
-    map.setMinZoom(4)
-    map.setMaxZoom(18)
   }
 })
 
@@ -139,6 +132,7 @@ onMounted(() => {
   map.on('load', () => {
     if (!map) return
 
+    loaded.value = true
     drawMesh(map, defaultLevel)
     map.on('click', `polygon-mesh-fill`, (e) => {
       const features = e.features as maplibregl.MapGeoJSONFeature[];
@@ -173,11 +167,11 @@ function drawMesh(map: Map, level?: number) {
   if (meshLevel) {
     selectedLevel.value = meshLevel
   }
-  drawSelectedMesh(map, level)
+  drawSelectedMesh(map)
   drawBoundingMesh(map, level)
 }
 
-async function drawSelectedMesh(map: Map, level?: number) {
+async function drawSelectedMesh(map: Map) {
   const source = map.getSource('polygon-selected-mesh')
   if (source) {
     const data = await (source as maplibregl.GeoJSONSource).getData()
@@ -388,11 +382,8 @@ function getZoomByCode(code: string) {
 async function onCopy() {
   const geojson = japanmesh.toGeoJSON(selectedCode.value, {code: selectedCode.value})
   await navigator.clipboard.writeText(JSON.stringify(geojson, null, 2))
-  toast.add({
-    color: 'gray',
-    icon: 'i-heroicons-check-circle',
-    title: 'クリップボードにコピーしました',
-  })
+  copied.value = true
+  setTimeout(() => copied.value = false, 3000)
 }
 </script>
 

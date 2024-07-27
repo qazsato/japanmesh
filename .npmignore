@@ -1,3 +1,5 @@
-src/
+.github/
+.vscode/
 docs/
-pacakges/
+packages/
+src/
