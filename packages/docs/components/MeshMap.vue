@@ -23,13 +23,13 @@
       </UInput>
       <UButton
         v-if="isValidCode"
-        icon="i-heroicons-clipboard-document"
+        :icon="copyButtonIcon"
         color="white"
         variant="solid"
         size="md"
         class="ml-2"
         @click="onCopy">
-        GeoJSON をコピー
+        {{ copyButtonText }}
       </UButton>
     </div>
     <div class="absolute top-2 right-2 z-10 flex items-center">
@@ -62,16 +62,21 @@ import { MAP_STYLE, MESH_LEVELS } from '~/constants'
 const route = useRoute()
 const router = useRouter()
 const colorMode = useColorMode()
-const toast = useToast()
 
 const selectedCode = ref<string>(route.query.code as string || '')
 const selectedLevel = ref(MESH_LEVELS[0])
 const fixedLevel = ref(false)
 let map: Map | null = null
 
+const copied = ref(false)
+
 const mapStyleUrl = computed(() => colorMode.preference === 'light' ? MAP_STYLE.LIGHT : MAP_STYLE.DARK)
 
 const isValidCode = computed(() => japanmesh.isValidCode(selectedCode.value))
+
+const copyButtonIcon = computed(() => copied.value ? 'i-heroicons-clipboard-document-check' : 'i-heroicons-clipboard-document')
+
+const copyButtonText = computed(() => copied.value ? 'コピーしました' : 'GeoJSON をコピー')
 
 watch(colorMode, () => {
   if (!map) return
@@ -85,6 +90,7 @@ watch(selectedCode, (code) => {
   if (!map) return
   if (code) {
     if (!japanmesh.isValidCode(code)) return
+    drawSelectedMesh(map)
     moveToMesh(code)
     router.push({ query: { code } })
   } else {
@@ -173,11 +179,11 @@ function drawMesh(map: Map, level?: number) {
   if (meshLevel) {
     selectedLevel.value = meshLevel
   }
-  drawSelectedMesh(map, level)
+  drawSelectedMesh(map)
   drawBoundingMesh(map, level)
 }
 
-async function drawSelectedMesh(map: Map, level?: number) {
+async function drawSelectedMesh(map: Map) {
   const source = map.getSource('polygon-selected-mesh')
   if (source) {
     const data = await (source as maplibregl.GeoJSONSource).getData()
@@ -388,11 +394,8 @@ function getZoomByCode(code: string) {
 async function onCopy() {
   const geojson = japanmesh.toGeoJSON(selectedCode.value, {code: selectedCode.value})
   await navigator.clipboard.writeText(JSON.stringify(geojson, null, 2))
-  toast.add({
-    color: 'gray',
-    icon: 'i-heroicons-check-circle',
-    title: 'クリップボードにコピーしました',
-  })
+  copied.value = true
+  setTimeout(() => copied.value = false, 3000)
 }
 </script>
 

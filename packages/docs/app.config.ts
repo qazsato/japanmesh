@@ -4,9 +4,6 @@ export default defineAppConfig({
     gray: 'neutral',
     icons: {
       dynamic: true
-    },
-    notifications: {
-      position: 'top-0 bottom-auto'
     }
   }
 })
