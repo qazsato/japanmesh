@@ -140,7 +140,26 @@ onMounted(() => {
   const protocol = new Protocol()
   maplibregl.addProtocol('pmtiles', protocol.tile)
 
-  map.on('load', () => drawMesh(map!, defaultLevel))
+  map.on('load', () => {
+    if (!map) return
+
+    drawMesh(map, defaultLevel)
+    map.on('click', `polygon-mesh-fill`, (e) => {
+      const features = e.features as maplibregl.MapGeoJSONFeature[];
+      const code = features[0].properties.code
+      const bounds = japanmesh.toLatLngBounds(code)
+      const center = bounds.getCenter()
+      const level = japanmesh.getLevel(code)
+      selectedCode.value = code
+      if (map) {
+        map.jumpTo({
+          center: [center.lng, center.lat],
+          zoom: getZoomByCode(code)
+        })
+        drawMesh(map, level)
+      }
+    })
+  })
 
   map.on('moveend', () => {
     if (!map) return
@@ -305,20 +324,6 @@ async function drawBoundingMesh(map: Map, level?: number) {
       'text-halo-color': '#fff',
       'text-halo-width': 1
     }
-  })
-
-  map.on('click', `polygon-mesh-fill`, (e) => {
-    const features = e.features as maplibregl.MapGeoJSONFeature[];
-    const code = features[0].properties.code
-    const bounds = japanmesh.toLatLngBounds(code)
-    const center = bounds.getCenter()
-    const level = japanmesh.getLevel(code)
-    map.jumpTo({
-      center: [center.lng, center.lat],
-      zoom: getZoomByCode(code)
-    })
-    selectedCode.value = code
-    drawMesh(map, level)
   })
 }
 
