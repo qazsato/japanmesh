@@ -71,14 +71,8 @@ let map: Map | null = null
 
 const mapStyleUrl = computed(() => colorMode.preference === 'light' ? MAP_STYLE.LIGHT : MAP_STYLE.DARK)
 
-const isValidCode = computed(() => {
-  try {
-    japanmesh.toGeoJSON(selectedCode.value)
-    return true
-  } catch {
-    return false
-  }
-})
+const isValidCode = computed(() => japanmesh.isValidCode(selectedCode.value))
+
 watch(colorMode, () => {
   if (!map) return
   map.setStyle(mapStyleUrl.value)
@@ -89,13 +83,10 @@ watch(colorMode, () => {
 
 watch(selectedCode, (code) => {
   if (!map) return
-  try {
-    const level = code ? japanmesh.getLevel(code) : getLevelByZoom(map.getZoom())
-    drawMesh(map, level)
-    router.push({ query: { code } })
-  } catch {
-    // NOTE: 不正なコードの場合は何もしない
-  }
+  if (code && !japanmesh.isValidCode(code)) return
+  const level = code ? japanmesh.getLevel(code) : getLevelByZoom(map.getZoom())
+  drawMesh(map, level)
+  router.push({ query: { code } })
 })
 
 watch(selectedLevel, (mesh) => {
