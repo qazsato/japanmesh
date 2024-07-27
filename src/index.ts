@@ -9,6 +9,7 @@ export const japanmesh = {
   getLevel: JapanMesh.getLevel,
   getCodes: JapanMesh.getCodes,
   getCodesWithinBounds: JapanMesh.getCodesWithinBounds,
+  isValidCode: JapanMesh.isValidCode,
 }
 
 export { LatLngBounds }
