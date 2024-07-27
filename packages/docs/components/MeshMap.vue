@@ -1,52 +1,51 @@
 <template>
   <div class="relative">
-    <div class="absolute top-2 left-2 z-10 flex items-center">
-      <UInput
-        v-model="selectedCode"
-        name="selectedCode"
-        placeholder="メッシュコード"
-        icon="i-heroicons-magnifying-glass-20-solid"
-        autocomplete="off"
-        size="md"
-        :ui="{ icon: { trailing: { pointer: '' } } }"
-      >
-        <template #trailing>
-          <UButton
-            v-show="selectedCode !== ''"
-            color="gray"
-            variant="link"
-            icon="i-heroicons-x-mark-20-solid"
-            :padded="false"
-            @click="selectedCode = ''"
-          />
-        </template>
-      </UInput>
-      <UButton
-        v-if="isValidCode"
-        :icon="copyButtonIcon"
-        color="white"
-        variant="solid"
-        size="md"
-        class="ml-2"
-        @click="onCopy">
-        {{ copyButtonText }}
-      </UButton>
-    </div>
-    <div class="absolute top-2 right-2 z-10 flex items-center">
-      <USelectMenu v-model="selectedLevel" :options="MESH_LEVELS" class="w-80" :disabled="fixedLevel">
-        <template #label>
-          <UBadge variant="outline" class="w-12 justify-center">{{ selectedLevel.level }}</UBadge>
-          <span class="truncate">{{ selectedLevel.name }}</span>
-        </template>
-        <template #option="{ option: mesh }">
-          <UBadge variant="outline" class="w-12 justify-center">{{ mesh.level }}</UBadge>
-          <span class="truncate">{{ mesh.name }}</span>
-        </template>
-      </USelectMenu>
-      <!-- <UTooltip text="メッシュレベルを固定する">
-        <UToggle v-model="fixedLevel" class="mx-2"/>
-      </UTooltip> -->
-    </div>
+    <template v-if="loaded">
+      <div class="absolute top-2 left-2 z-10 flex items-center">
+        <UInput
+          v-model="selectedCode"
+          name="selectedCode"
+          placeholder="メッシュコード"
+          icon="i-heroicons-magnifying-glass-20-solid"
+          autocomplete="off"
+          size="md"
+          :ui="{ icon: { trailing: { pointer: '' } } }"
+        >
+          <template #trailing>
+            <UButton
+              v-show="selectedCode !== ''"
+              color="gray"
+              variant="link"
+              icon="i-heroicons-x-mark-20-solid"
+              :padded="false"
+              @click="selectedCode = ''"
+            />
+          </template>
+        </UInput>
+        <UButton
+          v-if="isValidCode"
+          :icon="copyButtonIcon"
+          color="white"
+          variant="solid"
+          size="md"
+          class="ml-2"
+          @click="onCopy">
+          {{ copyButtonText }}
+        </UButton>
+      </div>
+      <div class="absolute top-2 right-2 z-10 flex items-center">
+        <USelectMenu v-model="selectedLevel" :options="MESH_LEVELS" class="w-80">
+          <template #label>
+            <UBadge variant="outline" class="w-12 justify-center">{{ selectedLevel.level }}</UBadge>
+            <span class="truncate">{{ selectedLevel.name }}</span>
+          </template>
+          <template #option="{ option: mesh }">
+            <UBadge variant="outline" class="w-12 justify-center">{{ mesh.level }}</UBadge>
+            <span class="truncate">{{ mesh.name }}</span>
+          </template>
+        </USelectMenu>
+      </div>
+    </template>
     <div id="map" />
   </div>
 </template>
@@ -65,9 +64,9 @@ const colorMode = useColorMode()
 
 const selectedCode = ref<string>(route.query.code as string || '')
 const selectedLevel = ref(MESH_LEVELS[0])
-const fixedLevel = ref(false)
 let map: Map | null = null
 
+const loaded = ref(false)
 const copied = ref(false)
 
 const mapStyleUrl = computed(() => colorMode.preference === 'light' ? MAP_STYLE.LIGHT : MAP_STYLE.DARK)
@@ -102,21 +101,9 @@ watch(selectedCode, (code) => {
 
 watch(selectedLevel, (mesh) => {
   if (!map) return
-  fixedLevel.value = false
   const zoom = map.getZoom()
   if (zoom <= mesh.minZoom || zoom > mesh.maxZoom) {
     map.setZoom(mesh.maxZoom)
-  }
-})
-
-watch(fixedLevel, (value) => {
-  if (!map) return
-  if (value) {
-    map.setMinZoom(selectedLevel.value.minZoom)
-    map.setMaxZoom(selectedLevel.value.maxZoom)
-  } else {
-    map.setMinZoom(4)
-    map.setMaxZoom(18)
   }
 })
 
@@ -145,6 +132,7 @@ onMounted(() => {
   map.on('load', () => {
     if (!map) return
 
+    loaded.value = true
     drawMesh(map, defaultLevel)
     map.on('click', `polygon-mesh-fill`, (e) => {
       const features = e.features as maplibregl.MapGeoJSONFeature[];
