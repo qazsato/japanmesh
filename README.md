@@ -2,7 +2,7 @@
 
 ![test](https://github.com/qazsato/japanmesh/actions/workflows/test.yml/badge.svg)
 [![npm version](https://badge.fury.io/js/japanmesh.svg)](https://badge.fury.io/js/japanmesh)
-[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ## About
 
