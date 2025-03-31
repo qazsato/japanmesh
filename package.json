@@ -26,7 +26,7 @@
   "bugs": {
     "url": "https://github.com/qazsato/japanmesh/issues"
   },
-  "homepage": "https://github.com/qazsato/japanmesh#readme",
+  "homepage": "https://qazsato.github.io/japanmesh",
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "@typescript-eslint/eslint-plugin": "^7.13.0",
