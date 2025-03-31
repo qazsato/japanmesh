@@ -1,6 +1,6 @@
 export const MAP_STYLE = {
-  LIGHT: 'https://tiles.geodig.jp/styles/white.json',
-  DARK: 'https://tiles.geodig.jp/styles/black.json'
+  LIGHT: 'https://api.protomaps.com/styles/v4/white/ja.json?key=afde32549db516d8',
+  DARK: 'https://api.protomaps.com/styles/v4/black/ja.json?key=afde32549db516d8'
 }
 
 export const MESH_LEVELS = [

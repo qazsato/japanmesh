@@ -302,7 +302,7 @@ async function drawBoundingMesh(map: Map, level?: number) {
     source: 'center-mesh',
     layout: {
       'text-field': ['get', 'code'],
-      'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+      'text-font': ['Noto Sans Regular'],
       'text-size': [
         'interpolate',
         ['linear'],
@@ -316,7 +316,7 @@ async function drawBoundingMesh(map: Map, level?: number) {
     },
     paint: {
       'text-halo-color': '#fff',
-      'text-halo-width': 1
+      'text-halo-width': 0.8
     }
   })
 }
