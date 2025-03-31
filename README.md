@@ -1,8 +1,9 @@
 # japanmesh
 
 ![test](https://github.com/qazsato/japanmesh/actions/workflows/test.yml/badge.svg)
-[![npm version](https://badge.fury.io/js/japanmesh.svg)](https://badge.fury.io/js/japanmesh)
-[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![NPM Version](https://img.shields.io/npm/v/japanmesh?color=61d800)
+![NPM Downloads](https://img.shields.io/npm/dm/japanmesh?color=61d800)
+![NPM License](https://img.shields.io/npm/l/japanmesh?color=61d800)
 
 ## About
 
@@ -22,7 +23,7 @@ JISX0410 の仕様に準拠しており、地域メッシュコード、緯度�
 | 250      | 4分の1地域メッシュ                 | 約250m　     | 10桁　            | [5339452922](https://qazsato.github.io/japanmesh?code=5339452922)   |
 | 125      | 8分の1地域メッシュ                 | 約125m　     | 11桁　            | [53394529221](https://qazsato.github.io/japanmesh?code=53394529221) |
 
-https://qazsato.github.io/japanmesh で全国の地域メッシュを確認できます。
+全国の地域メッシュは[こちら](https://qazsato.github.io/japanmesh)から確認できます。
 
 ## Installation
 
