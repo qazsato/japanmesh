@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest'
 import { japanmesh, LatLngBounds } from '../index'
 import { LEVEL_80000_CODES } from '../constants'
 import { GEO_JSON, CODE } from './data'
