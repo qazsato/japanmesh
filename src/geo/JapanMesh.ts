@@ -340,7 +340,7 @@ export class JapanMesh {
           if (!codes.includes(code)) {
             codes.push(code)
           }
-        } catch (e) {
+        } catch {
           // NOTE: 日本国土外は変換エラーとなるが処理を継続する
         }
       }
